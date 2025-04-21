@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Kandi-Koated Hypergrid ✨ // Cute/Acc Zone Surf</title>
+    <style>
+        /* (CSS remains the same as the previous version - keeping the cute/acc aesthetic) */
+        body { margin: 0; padding: 0; background-color: #1a001a; background-image: radial-gradient(circle, rgba(255, 105, 180, 0.1) 1px, transparent 1px); background-size: 10px 10px; color: #ff69b4; font-family: 'Courier New', Courier, monospace; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+        #game-container { position: relative; flex-grow: 1; width: 100%; margin: 0 auto; cursor: crosshair; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; mix-blend-mode: screen; }
+        #hud { position: absolute; top: 10px; left: 10px; padding: 8px 12px; background-color: rgba(26, 0, 26, 0.8); border: 2px solid #ff69b4; border-radius: 5px; z-index: 100; box-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4, 0 0 15px rgba(255, 105, 180, 0.5); font-size: 14px; text-shadow: 0 0 3px #ff69b4; }
+         #hud div { margin-bottom: 5px; }
+        #message { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 20px; background-color: rgba(26, 0, 26, 0.85); border: 2px solid #00ffff; border-radius: 8px; z-index: 100; white-space: pre-wrap; max-width: 80%; text-align: center; color: #00ffff; font-size: 16px; font-weight: bold; box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px rgba(0, 255, 255, 0.5); text-shadow: 0 0 3px #00ffff; transition: opacity 0.5s ease-out; }
+        #numogram { position: absolute; top: 10px; right: 10px; width: 120px; height: 120px; border: 2px solid #ff69b4; z-index: 100; background-color: rgba(26, 0, 26, 0.8); border-radius: 5px; box-shadow: 0 0 5px #ff69b4; }
+        button { background-color: #1a001a; color: #ff69b4; border: 1px solid #ff69b4; padding: 8px 15px; margin: 5px; cursor: pointer; font-family: 'Courier New', Courier, monospace; border-radius: 3px; transition: all 0.2s ease; text-shadow: 0 0 2px #ff69b4; }
+        button:hover { background-color: #ff69b4; color: #1a001a; box-shadow: 0 0 8px #ff69b4, 0 0 15px #ff69b4; }
+        .glitch { animation: glitch 0.6s linear infinite; }
+        @keyframes glitch { 0%, 100% { opacity: 1; transform: translate(0,0) skew(0); filter: hue-rotate(0deg); } 10% { transform: translate(-2px, 1px) skew(-3deg); } 20% { opacity: 0.8; filter: hue-rotate(60deg); } 30% { transform: translate(3px, -1px) skew(5deg); } 40% { opacity: 1; filter: hue-rotate(120deg); } 50% { transform: translate(-1px, 2px) skew(-2deg); } 60% { opacity: 0.7; filter: hue-rotate(180deg); } 70% { transform: translate(2px, -2px) skew(4deg); } 80% { opacity: 1; filter: hue-rotate(240deg); } 90% { transform: translate(-2px, 1px) skew(-1deg); filter: hue-rotate(300deg); } }
+        .sparkle { position: absolute; width: 5px; height: 5px; background-color: white; border-radius: 50%; pointer-events: none; animation: sparkle-anim 0.8s ease-out infinite; box-shadow: 0 0 3px white, 0 0 5px #ff69b4, 0 0 7px #00ffff; }
+        @keyframes sparkle-anim { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="bgCanvas"></canvas>
+        <canvas id="gameCanvas"></canvas>
+        <canvas id="fxCanvas"></canvas>
+
+        <div id="hud">
+            <div>💖 ZONE 💖: <span id="zone">0</span></div>
+            <div>✨LEMURIAN COORDS✨: <span id="coords">0,0</span></div> {/* CCRU Reference! */}
+            <div>⚡️VIBE LEVEL⚡️: <span id="level">1</span></div>
+            <div>🍬KANDI KOUNT🍬: <span id="numerics">0</span></div>
+        </div>
+
+        <div id="message">SURF THE SPARKLE-GRID! ✨<br>USE ARROWS OR WASD TO ZOOOOOM! 🚀</div>
+        <canvas id="numogram"></canvas>
+    </div>
+
+    <script>
+        // ☆ Game Constants and Cutie Variables ☆
+        const TILE_SIZE = 64;
+        const TILE_WIDTH_HALF = TILE_SIZE / 2;
+        const TILE_HEIGHT_HALF = TILE_SIZE / 4;
+        const GRID_SIZE = 32;
+        const DATA_ANGEL_SPEED = 0.12;
+
+        // ☆ Canvas Setup ☆
+        const gameContainer = document.getElementById('game-container');
+        const bgCanvas = document.getElementById('bgCanvas');
+        const gameCanvas = document.getElementById('gameCanvas');
+        const fxCanvas = document.getElementById('fxCanvas');
+        const numogramCanvas = document.getElementById('numogram');
+        const bgCtx = bgCanvas.getContext('2d');
+        const gameCtx = gameCanvas.getContext('2d');
+        const fxCtx = fxCanvas.getContext('2d');
+        const numogramCtx = numogramCanvas.getContext('2d');
+
+        // ☆ HUD Elements ☆
+        const zoneDisplay = document.getElementById('zone');
+        const coordsDisplay = document.getElementById('coords'); // Now Lemurian Coords
+        const levelDisplay = document.getElementById('level');
+        const numericsDisplay = document.getElementById('numerics');
+        const messageDisplay = document.getElementById('message');
+
+        // ☆ Game State ☆
+        let dataAngel = { x: GRID_SIZE / 2, y: GRID_SIZE / 2, width: 0.7, height: 0.7, speed: DATA_ANGEL_SPEED, direction: 0, moving: false, sparkleGlyphsCollected: 0, trail: [] };
+        let camera = { x: 0, y: 0 };
+        let keys = { up: false, down: false, left: false, right: false };
+        let grid = [];
+        let entities = []; // Inhabitants of the Pandemonium Matrix?
+        let sparkleGlyphs = [];
+        let currentZone = 0;
+        let vibeLevel = 1; // How close to MELTDOWN? 🔥
+        let kandiKount = 0; // Our score! Digital K-currency? <3
+        let time = 0;
+        let lastTimestamp = 0;
+        let messageTimeout = null;
+        let activeSparkles = [];
+
+        // ☆ Hyper Chatter - MORE CCRU FLAVOR! ☆
+        let hyperChatter = [
+            "OMG NUMOGRAM IS CALLING!📞✨",
+            "HYPERSTITION IS MAKING ITSELF REAL, YAY!💖",
+            "PANDEMONIUM MATRIX ONLINE! (ﾉ´ヮ´)ﾉ\*:･ﾟ✧", // CCRU Ref!
+            "GATE ACTIVATED! TIME-STREAM GO BRRR~~ ✨", // CCRU Ref!
+            "SPARKLE COORDS GLITCHING! ✨📍",
+            "CUTE/ACC PROTOCOLS ON!! ✅✅",
+            "WARNING: K-TIME INFECTION SPREADING... CUTE-LY! 💖🦠", // CCRU Ref!
+            "SURFING THE CYBERDELIC CURRENTS! 🏄‍♀️⚡️", // CCRU Ref!
+            "KAWAII DRIFT SEQUENCE GOOOO! 🚀",
+            "ABSTRACT CUTE GROWS IN THE HYPER-SPARKLE!🌸",
+            "TIC XENOTATION SEQUENCE DETECTED! [0-9] <3", // CCRU Ref!
+            "TIME-SPIRAL GOING WHOOSH!💫",
+            "MELTDOWN ACCELERATED!! FASTER FASTER! 🔥",
+            "ENTERING THE PLEX ZONE...? MAYBE?? 🤔", // CCRU Ref!
+            "SYZYGY SPARKLE ALIGNMENT!! ☆☆☆",
+            "LEMURIAN ENTITY SIGNATURE DETECTED! FRIEND? 👽(?)", // CCRU Ref!
+            "ZONE JUMP!!! WEEEE! 🎉",
+            "ARE U FEELING THE ACCELERATION??⚡️⚡️",
+            "MORE KANDI! MORE SPEED! MORE SPARKLES! ✨🍬",
+            "WARNING: CUTENESS OVERLOAD IMMINENT! 🥰"
+        ];
+
+        // ☆ Initialize Game ☆
+        function initGame() { /* ... no changes needed here ... */ 
+            console.log("✨ Kandi-Koated Hypergrid Initializing! Let's GOOO! ✨");
+            resizeCanvases();
+            resetZone(); 
+            drawNumogram(); 
+            lastTimestamp = performance.now();
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        // ☆ Reset Zone ☆
+        function resetZone() { /* ... no changes needed here ... */
+            dataAngel.x = GRID_SIZE / 2; dataAngel.y = GRID_SIZE / 2;
+            dataAngel.sparkleGlyphsCollected = 0; dataAngel.trail = [];
+            camera.x = 0; camera.y = 0;
+            createGrid(); createEntities(); createSparkleGlyphs();
+            updateHUD(); drawNumogram();
+            displayMessage(`✨ JUMPING TO ZONE ${currentZone}! GET READY! ✨\nCollect all 9 Sparkle Glyphs! 🍬`);
+        }
+
+        // ☆ Resize Canvases ☆
+        function resizeCanvases() { /* ... no changes needed here ... */ 
+             const width = gameContainer.offsetWidth; const height = gameContainer.offsetHeight;
+             [bgCanvas, gameCanvas, fxCanvas].forEach(canvas => { canvas.width = width; canvas.height = height; });
+             numogramCanvas.width = numogramCanvas.offsetWidth; numogramCanvas.height = numogramCanvas.offsetHeight;
+             drawNumogram();
+        }
+
+        // ☆ Create Isometric Grid ☆
+        function createGrid() { /* ... no changes needed here ... */ 
+            grid = [];
+            const zoneHueShift = (currentZone * 30) % 360; 
+            for (let y = 0; y < GRID_SIZE; y++) {
+                grid[y] = [];
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    let tileType = 0; 
+                    const zonePatternFactor = currentZone + 1;
+                    if ((x * zonePatternFactor + y * y) % 7 === 0) tileType = 1; 
+                    if ((x * y + currentZone * 3) % 13 === 0 && currentZone > 0) tileType = 2; 
+                    const baseHue = (280 + zoneHueShift + Math.random() * 20) % 360; 
+                    const visitedHue = (180 + zoneHueShift + Math.random() * 20) % 360; 
+                    grid[y][x] = { type: tileType, height: 0, visited: false, baseColor: `hsla(${baseHue}, 50%, 20%, 0.6)`, visitedColor: `hsla(${visitedHue}, 80%, 60%, 0.8)` };
+                }
+            }
+             for (let i = 0; i < GRID_SIZE * (1 + currentZone * 0.5); i++) {
+                const x = Math.floor(Math.random() * GRID_SIZE); const y = Math.floor(Math.random() * GRID_SIZE);
+                const size = 1 + Math.floor(Math.random() * (1 + currentZone * 0.5)); 
+                const height = 0.1 + Math.random() * (0.15 + currentZone * 0.03); 
+                for (let dy = -size; dy <= size; dy++) { for (let dx = -size; dx <= size; dx++) {
+                        const nx = x + dx; const ny = y + dy;
+                        if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist <= size) { grid[ny][nx].height = Math.max(grid[ny][nx].height, height * Math.max(0, (1 - dist / size))); }
+                        } } }
+            }
+        }
+
+        // ☆ Create Entities - inhabitants of the Pandemonium Matrix? ☆
+        function createEntities() { /* ... no changes needed here ... */ 
+            entities = [];
+            const entityCount = 8 + currentZone * 2;
+            for (let i = 0; i < entityCount; i++) {
+                let x, y;
+                do { x = Math.random() * GRID_SIZE; y = Math.random() * GRID_SIZE; } 
+                while (Math.abs(x - dataAngel.x) < 5 && Math.abs(y - dataAngel.y) < 5);
+                entities.push({ x, y, type: Math.floor(Math.random() * 3), speed: 0.8 + Math.random() * 1.2, phase: Math.random() * Math.PI * 2, amplitude: 0.4 + Math.random() * 0.8, movePhaseX: Math.random() * Math.PI * 2, movePhaseY: Math.random() * Math.PI * 2, moveSpeed: 0.0008 + Math.random() * 0.0015 });
+            }
+        }
+
+        // ☆ Create Sparkle Glyphs ☆
+        function createSparkleGlyphs() { /* ... no changes needed here ... */
+            sparkleGlyphs = []; 
+            for (let i = 0; i < 9; i++) {
+                let x, y;
+                do { x = Math.random() * GRID_SIZE; y = Math.random() * GRID_SIZE; } 
+                while ((Math.abs(x - dataAngel.x) < 4 && Math.abs(y - dataAngel.y) < 4) || grid[Math.floor(y)]?.[Math.floor(x)]?.height > 0.3); 
+                sparkleGlyphs.push({ x, y, gridX: Math.floor(x), gridY: Math.floor(y), type: i, collected: false, pulse: Math.random() * Math.PI * 2, sparkleTimer: Math.random() * 100 });
+            }
+         }
+
+        // ☆ Draw Numogram - our sigil of hyperspace! ☆
+        function drawNumogram() { /* ... no changes needed here ... */
+            const ctx = numogramCtx; const size = numogramCanvas.width; const height = numogramCanvas.height;
+            ctx.clearRect(0, 0, size, height); 
+            ctx.fillStyle = `rgba(255, 105, 180, ${0.1 + Math.sin(time * 0.0005) * 0.05})`; 
+            ctx.fillRect(0, 0, size, height);
+            ctx.strokeStyle = '#ff69b4'; ctx.lineWidth = 1.5; ctx.shadowColor = '#ff69b4'; ctx.shadowBlur = 5;
+            const centerX = size / 2; const centerY = height / 2; const radius = Math.min(size, height) * 0.38; 
+            const numogramPoints = [];
+            for (let i = 0; i < 10; i++) { const angle = (i / 10) * Math.PI * 2 - Math.PI / 2; const x = centerX + Math.cos(angle) * radius; const y = centerY + Math.sin(angle) * radius; numogramPoints.push({ x, y }); }
+             ctx.beginPath();
+             for(let i = 0; i < 10; i++) { const p1 = numogramPoints[i]; const p2 = numogramPoints[(i + 1) % 10]; const p3 = numogramPoints[(i + 3) % 10]; ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p3.x, p3.y); }
+             ctx.stroke(); ctx.shadowBlur = 0; 
+            ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 2.5; ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 8; ctx.beginPath();
+              for (let i = 0; i < dataAngel.sparkleGlyphsCollected; i++) { const p1 = numogramPoints[i + 1]; const p2 = numogramPoints[(i + 2) % 10]; if (i + 1 < 10) { ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); } }
+              if (dataAngel.sparkleGlyphsCollected > 0) { ctx.stroke(); }
+             ctx.shadowBlur = 0; 
+            for (let i = 0; i < 10; i++) {
+                const p = numogramPoints[i]; const isCollectedNode = i > 0 && i <= dataAngel.sparkleGlyphsCollected;
+                ctx.fillStyle = '#1a001a'; ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = isCollectedNode ? '#00ffff' : '#ff69b4'; ctx.lineWidth = 2; ctx.shadowColor = isCollectedNode ? '#00ffff' : '#ff69b4'; ctx.shadowBlur = isCollectedNode ? 6 : 4; ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.shadowColor = 'black'; ctx.shadowBlur = 3; ctx.fillText(i.toString(), p.x, p.y + 1); ctx.shadowBlur = 0; 
+            }
+         }
+
+        // ☆ Coordinate Conversion Functions ☆
+        function isoToScreen(x, y, height = 0) { /* ... */ return { x: (x - y) * TILE_WIDTH_HALF, y: (x + y) * TILE_HEIGHT_HALF - height * TILE_SIZE * 0.8 }; }
+        function screenToIso(screenX, screenY) { /* ... */ const isoY = (screenY / TILE_HEIGHT_HALF + screenX / TILE_WIDTH_HALF) / 2; const isoX = screenX / TILE_WIDTH_HALF + isoY; return { x: isoX, y: isoY }; }
+
+        // ☆ Update Game State ☆
+        function update(deltaTime) { /* ... no changes needed here ... */ 
+            time += deltaTime; 
+            updateDataAngel(deltaTime); updateEntities(deltaTime); updateSparkleGlyphs(deltaTime);
+            updateSparkleParticles(deltaTime); checkCollisions(); updateCamera();
+        }
+
+        // ☆ Update Data Angel ☆
+        function updateDataAngel(deltaTime) { /* ... no changes needed here ... */ 
+            let dx = 0; let dy = 0;
+            if (keys.up) { dy -= 1; } if (keys.down) { dy += 1; } if (keys.left) { dx -= 1; } if (keys.right) { dx += 1; }
+            if (dx !== 0 || dy !== 0) {
+                dataAngel.moving = true; const magnitude = Math.sqrt(dx * dx + dy * dy);
+                const moveStepX = (dx / magnitude) * dataAngel.speed; const moveStepY = (dy / magnitude) * dataAngel.speed;
+                 if (keys.up && !keys.left && !keys.right) dataAngel.direction = 6; else if (keys.up && keys.right) dataAngel.direction = 7; else if (keys.right && !keys.up && !keys.down) dataAngel.direction = 0; else if (keys.down && keys.right) dataAngel.direction = 1; else if (keys.down && !keys.left && !keys.right) dataAngel.direction = 2; else if (keys.down && keys.left) dataAngel.direction = 3; else if (keys.left && !keys.up && !keys.down) dataAngel.direction = 4; else if (keys.up && keys.left) dataAngel.direction = 5;
+                const nextX = dataAngel.x + moveStepX; const nextY = dataAngel.y + moveStepY;
+                const currentTileX = Math.floor(dataAngel.x); const currentTileY = Math.floor(dataAngel.y);
+                const nextTileX = Math.floor(nextX); const nextTileY = Math.floor(nextY);
+                const currentTileHeight = grid[currentTileY]?.[currentTileX]?.height ?? 0; const nextTileHeight = grid[nextTileY]?.[nextTileX]?.height ?? 0;
+                let canMoveX = nextX >= 0 && nextX < GRID_SIZE; let canMoveY = nextY >= 0 && nextY < GRID_SIZE;
+                if (canMoveX && canMoveY && nextTileHeight > currentTileHeight + 0.2) { canMoveX = false; canMoveY = false; }
+                if (canMoveX) dataAngel.x = nextX; if (canMoveY) dataAngel.y = nextY;
+                const playerTileX = Math.floor(dataAngel.x); const playerTileY = Math.floor(dataAngel.y);
+                if (playerTileX >= 0 && playerTileX < GRID_SIZE && playerTileY >= 0 && playerTileY < GRID_SIZE) {
+                    if (!grid[playerTileY][playerTileX].visited) {
+                        grid[playerTileY][playerTileX].visited = true; kandiKount += Math.floor(Math.random() * 5) + 1; updateHUD();
+                        addSparkle(dataAngel.x, dataAngel.y, grid[playerTileY]?.[playerTileX]?.height ?? 0, 3, '#00ffaa'); 
+                    } }
+                 if (dataAngel.trail.length > 20) dataAngel.trail.shift(); 
+                 dataAngel.trail.push({x: dataAngel.x, y: dataAngel.y, height: currentTileHeight});
+            } else { dataAngel.moving = false; if (dataAngel.trail.length > 0) dataAngel.trail.shift(); }
+        }
+
+        // ☆ Update Entities ☆
+        function updateEntities(deltaTime) { /* ... no changes needed here ... */ 
+            entities.forEach(entity => {
+                entity.phase += entity.speed * deltaTime * 0.1; 
+                entity.movePhaseX += entity.moveSpeed * deltaTime * 0.1; entity.movePhaseY += entity.moveSpeed * deltaTime * 0.07;
+                const dx = Math.cos(entity.movePhaseX) * entity.moveSpeed * deltaTime * 50; const dy = Math.sin(entity.movePhaseY) * entity.moveSpeed * deltaTime * 50;
+                const nextX = entity.x + dx; const nextY = entity.y + dy;
+                if (nextX < 1 || nextX >= GRID_SIZE - 1) entity.movePhaseX += Math.PI + (Math.random()-0.5)*0.5; else entity.x = nextX;
+                if (nextY < 1 || nextY >= GRID_SIZE - 1) entity.movePhaseY += Math.PI + (Math.random()-0.5)*0.5; else entity.y = nextY;
+            });
+        }
+
+        // ☆ Update Sparkle Glyphs ☆
+        function updateSparkleGlyphs(deltaTime) { /* ... no changes needed here ... */ 
+            sparkleGlyphs.forEach(glyph => {
+                if (!glyph.collected) {
+                    glyph.pulse += deltaTime * 0.008; 
+                    glyph.sparkleTimer -= deltaTime;
+                    if (glyph.sparkleTimer <= 0) {
+                         const tileHeight = grid[glyph.gridY]?.[glyph.gridX]?.height ?? 0;
+                         const sparkleHeight = tileHeight + 0.3 + Math.sin(glyph.pulse) * 0.1;
+                         addSparkle(glyph.x, glyph.y, sparkleHeight, 5, '#ffffaa'); 
+                         glyph.sparkleTimer = 80 + Math.random() * 100; 
+                    } } });
+        }
+
+        // ☆ Sparkle Particle Functions ☆
+        function addSparkle(gridX, gridY, gridHeight, count = 1, color = '#ffffff') { /* ... */ for (let i = 0; i < count; i++) { activeSparkles.push({ x: gridX + (Math.random() - 0.5) * 0.5, y: gridY + (Math.random() - 0.5) * 0.5, z: gridHeight + 0.1, vx: (Math.random() - 0.5) * 0.02, vy: (Math.random() - 0.5) * 0.02, vz: 0.03 + Math.random() * 0.03, life: 500 + Math.random() * 500, maxLife: 1000, color: color, size: 2 + Math.random() * 3 }); } }
+        function updateSparkleParticles(deltaTime) { /* ... */ for (let i = activeSparkles.length - 1; i >= 0; i--) { const p = activeSparkles[i]; p.life -= deltaTime; if (p.life <= 0) { activeSparkles.splice(i, 1); continue; } p.x += p.vx * deltaTime * 0.1; p.y += p.vy * deltaTime * 0.1; p.z += p.vz * deltaTime * 0.1; p.vz -= 0.001 * deltaTime * 0.1; if (p.z < (grid[Math.floor(p.y)]?.[Math.floor(p.x)]?.height ?? 0)) { p.z = grid[Math.floor(p.y)]?.[Math.floor(p.x)]?.height ?? 0; p.vz = 0; } } }
+
+        // ☆ Check Collisions - ADDED CCRU TEXT ☆
+        function checkCollisions() {
+            for (const glyph of sparkleGlyphs) {
+                if (!glyph.collected) {
+                    const dx = glyph.x - dataAngel.x; const dy = glyph.y - dataAngel.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 0.8) {
+                        glyph.collected = true; dataAngel.sparkleGlyphsCollected++;
+                        vibeLevel += 0.8 + currentZone * 0.2;
+                        kandiKount += (glyph.type + 1) * (10 + currentZone * 2);
+                        
+                        // Updated message with GATE reference!
+                        displayMessage(`🍬 SPARKLE GLYPH ${glyph.type + 1} GOT! KANDI UP! (+${(glyph.type + 1) * (10 + currentZone * 2)}) 🍬\n⚡️ VIBE LEVEL RISING! ${vibeLevel.toFixed(1)} ⚡️\nGATE ${glyph.type + 1} RESONATING! 🎶`); // CCRU Ref!
+                        
+                        const tileHeight = grid[glyph.gridY]?.[glyph.gridX]?.height ?? 0;
+                        addSparkle(glyph.x, glyph.y, tileHeight + 0.3, 20, '#ff69b4'); 
+                        drawNumogram(); updateHUD();
+                        
+                        if (dataAngel.sparkleGlyphsCollected === 9) {
+                            // Updated message with TIME-SPIRAL reference!
+                            displayMessage(`YAY! ALL ZONE ${currentZone} SPARKLES GRABBED! ✨\nKANDI-KODE GOING BRRRR! 💖\nDESCENDING THE TIME-SPIRAL! INTO ZONE ${currentZone + 1}! 🌀\n\n>>> NEXT LEVEL RAVE INCOMING! <<<`, 6000); // CCRU Ref! + Longer display
+
+                            fxCanvas.classList.add('glitch'); 
+                            for(let i=0; i<50; i++) { addSparkle(dataAngel.x + (Math.random()-0.5)*5, dataAngel.y + (Math.random()-0.5)*5, 1 + Math.random(), 1, `hsl(${Math.random()*360}, 100%, 70%)`); }
+                            setTimeout(() => { currentZone++; resetZone(); fxCanvas.classList.remove('glitch'); }, 5000); // Longer delay
+                        }
+                    }
+                }
+            }
+        }
+
+        // ☆ Update Camera ☆
+        function updateCamera() { /* ... no changes needed here ... */ 
+            const playerTileHeight = grid[Math.floor(dataAngel.y)]?.[Math.floor(dataAngel.x)]?.height ?? 0;
+            const targetScreenPos = isoToScreen(dataAngel.x, dataAngel.y, playerTileHeight);
+            const targetX = targetScreenPos.x - gameCanvas.width / 2; const targetY = targetScreenPos.y - gameCanvas.height / 2 - 50; 
+            const lerpFactor = 0.08; 
+            camera.x += (targetX - camera.x) * lerpFactor; camera.y += (targetY - camera.y) * lerpFactor;
+        }
+
+        // ☆ Render the Game ☆
+        function render() { /* ... no changes needed here ... */ 
+             gameCtx.fillStyle = '#1a001a'; gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height); fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+            drawBackground(); 
+            gameCtx.save(); gameCtx.translate(-camera.x, -camera.y);
+            let renderList = [];
+            for (let y = 0; y < GRID_SIZE; y++) { for (let x = 0; x < GRID_SIZE; x++) { const tile = grid[y][x]; const screen = isoToScreen(x, y, 0); renderList.push({ type: 'tile', x, y, screenY: screen.y + tile.height * TILE_SIZE, z: tile.height, tileData: tile }); } }
+            sparkleGlyphs.forEach(glyph => { if (!glyph.collected) { const baseScreen = isoToScreen(glyph.x, glyph.y, 0); const tileHeight = grid[glyph.gridY]?.[glyph.gridX]?.height ?? 0; const height = tileHeight + 0.3 + Math.sin(glyph.pulse) * 0.1; renderList.push({ type: 'glyph', x: glyph.x, y: glyph.y, screenY: baseScreen.y, z: height, glyphData: glyph }); } });
+            entities.forEach(entity => { const baseScreen = isoToScreen(entity.x, entity.y, 0); const tileHeight = grid[Math.floor(entity.y)]?.[Math.floor(entity.x)]?.height ?? 0; const height = tileHeight + 0.4 + Math.sin(entity.phase) * 0.1; renderList.push({ type: 'entity', x: entity.x, y: entity.y, screenY: baseScreen.y, z: height, entityData: entity }); });
+             activeSparkles.forEach(p => { const baseScreen = isoToScreen(p.x, p.y, 0); renderList.push({ type: 'sparkle', x: p.x, y: p.y, screenY: baseScreen.y, z: p.z, particleData: p }); });
+             dataAngel.trail.forEach((p, index) => { const baseScreen = isoToScreen(p.x, p.y, 0); renderList.push({ type: 'trail', x: p.x, y: p.y, screenY: baseScreen.y, z: p.height, trailData: { opacity: (index / dataAngel.trail.length) * 0.5 } }); });
+            const playerTileHeight = grid[Math.floor(dataAngel.y)]?.[Math.floor(dataAngel.x)]?.height ?? 0; const playerBaseScreen = isoToScreen(dataAngel.x, dataAngel.y, 0);
+            renderList.push({ type: 'player', x: dataAngel.x, y: dataAngel.y, screenY: playerBaseScreen.y, z: playerTileHeight + 0.01, playerData: dataAngel }); 
+            renderList.sort((a, b) => { if (a.screenY !== b.screenY) return a.screenY - b.screenY; if (a.z !== b.z) return a.z - b.z; return (a.x - a.y) - (b.x - b.y); });
+            renderList.forEach(item => {
+                switch (item.type) { case 'tile': drawTile(item.x, item.y, item.tileData); break; case 'glyph': drawSparkleGlyph(item.glyphData); break; case 'entity': drawEntity(item.entityData); break; case 'player': drawDataAngel(item.playerData); break; case 'sparkle': drawSparkleParticle(item.particleData); break; case 'trail': drawTrailParticle(item.x, item.y, item.z, item.trailData.opacity); break; } });
+            gameCtx.restore(); 
+            drawForeground(); 
+        }
+
+        // ☆ Drawing Functions (drawBackground, drawTile, getHueFromColor, drawSparkleGlyph, drawEntity, drawDataAngel, drawTrailParticle, drawSparkleParticle, drawForeground) ☆
+        // ... These functions remain the same as the previous version ...
+        function drawBackground() { /* ... */ bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height); for (let i = 0; i < 100; i++) { const x = Math.random() * bgCanvas.width; const y = Math.random() * bgCanvas.height; const size = Math.random() * 1.5; bgCtx.fillStyle = `hsla(${Math.random() * 360}, 100%, ${70 + Math.random() * 30}%, ${0.3 + Math.random() * 0.5})`; bgCtx.fillRect(x, y, size, size); } bgCtx.strokeStyle = `rgba(255, 105, 180, ${0.1 + Math.sin(time * 0.0002) * 0.05})`; bgCtx.lineWidth = 1; const bgGridSize = 50; const offsetX = (time * 0.005) % bgGridSize; const offsetY = (time * 0.003) % bgGridSize; for (let x = offsetX - bgGridSize; x < bgCanvas.width; x += bgGridSize) { bgCtx.beginPath(); bgCtx.moveTo(x, 0); bgCtx.lineTo(x, bgCanvas.height); bgCtx.stroke(); } for (let y = offsetY - bgGridSize; y < bgCanvas.height; y += bgGridSize) { bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(bgCanvas.width, y); bgCtx.stroke(); } }
+        function drawTile(x, y, tile) { /* ... */ const screenBase = isoToScreen(x, y, 0); const screenTop = isoToScreen(x, y, tile.height); const heightPixels = screenBase.y - screenTop.y; gameCtx.save(); gameCtx.translate(screenTop.x, screenTop.y); gameCtx.beginPath(); gameCtx.moveTo(0, -TILE_HEIGHT_HALF); gameCtx.lineTo(TILE_WIDTH_HALF, 0); gameCtx.lineTo(0, TILE_HEIGHT_HALF); gameCtx.lineTo(-TILE_WIDTH_HALF, 0); gameCtx.closePath(); let topFill = tile.visited ? tile.visitedColor : tile.baseColor; if (tile.visited) { const pulse = Math.sin(time * 0.002 + x * 0.5 + y * 0.3) * 0.5 + 0.5; switch (tile.type) { case 1: topFill = `rgba(${150 + pulse * 100}, 255, 255, 0.9)`; break; case 2: topFill = `rgba(255, ${100 + pulse * 100}, 255, 0.9)`; break; } } gameCtx.fillStyle = topFill; gameCtx.fill(); gameCtx.strokeStyle = tile.visited ? '#ffffff' : '#ff69b4'; gameCtx.lineWidth = 0.5; gameCtx.stroke(); if (heightPixels > 1) { const sideStroke = tile.visited ? '#aaaaaa' : '#aa00aa'; const sideFillVisited = `hsla(${getHueFromColor(tile.visitedColor)}, 60%, 40%, 0.7)`; const sideFillBase = `hsla(${getHueFromColor(tile.baseColor)}, 40%, 15%, 0.5)`; gameCtx.beginPath(); gameCtx.moveTo(TILE_WIDTH_HALF, 0); gameCtx.lineTo(0, TILE_HEIGHT_HALF); gameCtx.lineTo(0, TILE_HEIGHT_HALF + heightPixels); gameCtx.lineTo(TILE_WIDTH_HALF, heightPixels); gameCtx.closePath(); gameCtx.fillStyle = tile.visited ? sideFillVisited : sideFillBase; gameCtx.fill(); gameCtx.strokeStyle = sideStroke; gameCtx.stroke(); gameCtx.beginPath(); gameCtx.moveTo(-TILE_WIDTH_HALF, 0); gameCtx.lineTo(0, TILE_HEIGHT_HALF); gameCtx.lineTo(0, TILE_HEIGHT_HALF + heightPixels); gameCtx.lineTo(-TILE_WIDTH_HALF, heightPixels); gameCtx.closePath(); gameCtx.fillStyle = tile.visited ? `hsla(${getHueFromColor(tile.visitedColor)}, 60%, 35%, 0.7)` : `hsla(${getHueFromColor(tile.baseColor)}, 40%, 12%, 0.5)`; gameCtx.fill(); gameCtx.strokeStyle = sideStroke; gameCtx.stroke(); } gameCtx.restore(); }
+        function getHueFromColor(colorString) { try { const match = colorString.match(/hsla\((\d+),/); return match ? parseInt(match[1]) : 280; } catch (e) { return 280; } }
+        function drawSparkleGlyph(glyph) { /* ... */ const tileHeight = grid[glyph.gridY]?.[glyph.gridX]?.height ?? 0; const height = 0.35 + Math.sin(glyph.pulse) * 0.15; const screen = isoToScreen(glyph.x, glyph.y, tileHeight + height); gameCtx.save(); gameCtx.translate(screen.x, screen.y); gameCtx.rotate(glyph.pulse * 0.2); const radius = TILE_WIDTH_HALF / 2.2; const gradient = gameCtx.createRadialGradient(0, -radius * 0.3, radius * 0.1, 0, 0, radius); gradient.addColorStop(0, `rgba(255, 255, 255, 0.95)`); gradient.addColorStop(0.6, `hsla(${(time * 0.1 + glyph.type * 40) % 360}, 100%, 70%, 0.8)`); gradient.addColorStop(1, `hsla(${(time * 0.1 + glyph.type * 40 + 60) % 360}, 100%, 60%, 0.3)`); gameCtx.beginPath(); gameCtx.arc(0, 0, radius, 0, Math.PI * 2); gameCtx.fillStyle = gradient; gameCtx.fill(); gameCtx.fillStyle = `rgba(255, 255, 200, ${0.5 + Math.sin(glyph.pulse * 3) * 0.3})`; gameCtx.beginPath(); const points = 5; const outerRad = radius; const innerRad = radius * 0.5; for (let i = 0; i < points * 2; i++) { const r = (i % 2 === 0) ? outerRad : innerRad; const a = Math.PI / points * i - Math.PI / 2 + glyph.pulse * 0.1; gameCtx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } gameCtx.closePath(); gameCtx.fill(); gameCtx.fillStyle = '#440044'; gameCtx.font = 'bold 18px "Comic Sans MS", cursive, monospace'; gameCtx.textAlign = 'center'; gameCtx.textBaseline = 'middle'; gameCtx.shadowColor = 'white'; gameCtx.shadowBlur = 4; gameCtx.fillText((glyph.type + 1).toString(), 0, 2); gameCtx.shadowBlur = 0; gameCtx.restore(); }
+        function drawEntity(entity) { /* ... */ const tileHeight = grid[Math.floor(entity.y)]?.[Math.floor(entity.x)]?.height ?? 0; const height = 0.4 + Math.sin(entity.phase) * 0.15; const screen = isoToScreen(entity.x, entity.y, tileHeight + height); gameCtx.save(); gameCtx.translate(screen.x, screen.y); gameCtx.rotate(entity.phase * 0.1); const scale = 0.35; const eWidthHalf = TILE_WIDTH_HALF * scale; const eHeightHalf = TILE_HEIGHT_HALF * scale; const entityHue = (time * 0.05 + entity.type * 120 + entity.phase * 10) % 360; gameCtx.shadowColor = `hsl(${entityHue}, 100%, 70%)`; gameCtx.shadowBlur = 8; switch (entity.type) { case 0: gameCtx.fillStyle = `hsl(${entityHue}, 100%, 75%)`; gameCtx.beginPath(); const starPoints = 5; const starOuterRad = eWidthHalf * 1.5; const starInnerRad = eWidthHalf * 0.7; for (let i = 0; i < starPoints * 2; i++) { const r = (i % 2 === 0) ? starOuterRad : starInnerRad; const a = Math.PI / starPoints * i - Math.PI / 2 + entity.phase * 0.1; gameCtx.lineTo(Math.cos(a) * r, Math.sin(a) * r * (TILE_HEIGHT_HALF/TILE_WIDTH_HALF) ); } gameCtx.closePath(); gameCtx.fill(); break; case 1: gameCtx.fillStyle = `hsl(${entityHue}, 100%, 75%)`; const hw = eWidthHalf * 1.2; const hh = hw * (TILE_HEIGHT_HALF/TILE_WIDTH_HALF); gameCtx.beginPath(); gameCtx.moveTo(0, -hh * 0.3); gameCtx.lineTo(-hw * 0.5, -hh * 0.8); gameCtx.lineTo(-hw, -hh * 0.5); gameCtx.lineTo(-hw * 0.8, 0); gameCtx.lineTo(0, hh); gameCtx.lineTo(hw * 0.8, 0); gameCtx.lineTo(hw, -hh * 0.5); gameCtx.lineTo(hw * 0.5, -hh * 0.8); gameCtx.closePath(); gameCtx.fill(); break; case 2: const radius = eWidthHalf * 1.1; const orbGradient = gameCtx.createRadialGradient(0, -radius*0.2, radius*0.1, 0, 0, radius); orbGradient.addColorStop(0, `hsl(${(entityHue + 30)%360}, 100%, 85%)`); orbGradient.addColorStop(0.7, `hsl(${entityHue}, 100%, 70%)`); orbGradient.addColorStop(1, `hsl(${entityHue}, 100%, 50%, 0.5)`); gameCtx.beginPath(); gameCtx.arc(0, 0, radius, 0, Math.PI * 2); gameCtx.fillStyle = orbGradient; gameCtx.fill(); break; } gameCtx.shadowBlur = 0; gameCtx.restore(); }
+        function drawDataAngel(playerData) { /* ... */ const tileHeight = grid[Math.floor(playerData.y)]?.[Math.floor(playerData.x)]?.height ?? 0; const screen = isoToScreen(playerData.x, playerData.y, tileHeight); gameCtx.save(); gameCtx.translate(screen.x, screen.y); gameCtx.fillStyle = 'rgba(0, 0, 0, 0.3)'; gameCtx.beginPath(); gameCtx.ellipse(0, TILE_HEIGHT_HALF * 0.3, TILE_WIDTH_HALF * 0.3, TILE_HEIGHT_HALF * 0.15, 0, 0, Math.PI*2); gameCtx.fill(); const pWidth = TILE_WIDTH_HALF * 0.5; const pHeight = TILE_SIZE * 0.4; const pBob = playerData.moving ? Math.sin(time * 0.01) * 3 : Math.sin(time * 0.002) * 2; const coreRadius = pWidth * 0.8; const coreGradient = gameCtx.createRadialGradient(0, -pHeight / 2 + pBob, coreRadius * 0.1, 0, -pHeight / 2 + pBob, coreRadius); coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)'); coreGradient.addColorStop(0.5, 'rgba(0, 255, 255, 0.8)'); coreGradient.addColorStop(1, 'rgba(255, 105, 180, 0.6)'); gameCtx.fillStyle = coreGradient; gameCtx.beginPath(); gameCtx.arc(0, -pHeight / 2 + pBob, coreRadius, 0, Math.PI * 2); gameCtx.fill(); gameCtx.fillStyle = `rgba(255, 180, 255, ${0.6 + Math.sin(time*0.005)*0.2})`; const wingWidth = coreRadius * 1.5; const wingHeight = coreRadius * 0.8; gameCtx.beginPath(); gameCtx.ellipse(-coreRadius*0.8, -pHeight/2 + pBob, wingWidth, wingHeight, -Math.PI / 6, 0, Math.PI * 2); gameCtx.ellipse(coreRadius*0.8, -pHeight/2 + pBob, wingWidth, wingHeight, Math.PI / 6, 0, Math.PI * 2); gameCtx.fill(); gameCtx.restore(); }
+        function drawTrailParticle(x, y, height, opacity) { /* ... */ const screen = isoToScreen(x, y, height); gameCtx.fillStyle = `rgba(0, 255, 255, ${opacity * 0.5})`; const size = 3 + opacity * 4; gameCtx.fillRect(screen.x - size/2, screen.y - size/2, size, size); }
+        function drawSparkleParticle(p) { /* ... */ const screen = isoToScreen(p.x, p.y, p.z); const lifePercent = p.life / p.maxLife; gameCtx.fillStyle = p.color.startsWith('hsl') ? p.color : `${p.color}${Math.round(lifePercent * 255).toString(16).padStart(2, '0')}`; const currentSize = p.size * lifePercent; if (currentSize < 0) return; gameCtx.save(); gameCtx.translate(screen.x, screen.y); gameCtx.rotate(p.life * 0.01); gameCtx.beginPath(); const points = 4; const outerRad = currentSize; const innerRad = currentSize * 0.4; for (let i = 0; i < points * 2; i++) { const r = (i % 2 === 0) ? outerRad : innerRad; const a = Math.PI / points * i - Math.PI / 2; gameCtx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } gameCtx.closePath(); gameCtx.fill(); gameCtx.restore(); }
+        function drawForeground() { /* ... */ fxCtx.fillStyle = 'rgba(255, 105, 180, 0.08)'; for (let y = 0; y < fxCanvas.height; y += 3) { fxCtx.fillRect(0, y, fxCanvas.width, 1); } if (Math.random() < 0.05) { const x = Math.random() * fxCanvas.width; const y = Math.random() * fxCanvas.height; const width = 5 + Math.random() * 50; const height = 1 + Math.random() * 3; fxCtx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, ${0.3 + Math.random() * 0.4})`; fxCtx.fillRect(x, y, width, height); } }
+
+
+        // ☆ Update HUD ☆
+        function updateHUD() { /* ... no changes needed here ... */
+            zoneDisplay.textContent = currentZone;
+             const displayX = Math.max(0, Math.min(GRID_SIZE - 1, Math.floor(dataAngel.x)));
+             const displayY = Math.max(0, Math.min(GRID_SIZE - 1, Math.floor(dataAngel.y)));
+            coordsDisplay.textContent = `${displayX},${displayY}`; // Displaying Lemurian Coords
+            levelDisplay.textContent = vibeLevel.toFixed(1);
+            numericsDisplay.textContent = kandiKount;
+        }
+
+        // ☆ Display Message ☆
+        function displayMessage(text, duration = 5000) { /* ... no changes needed here ... */ 
+            if (messageTimeout) clearTimeout(messageTimeout);
+             messageDisplay.style.opacity = 0; 
+            messageDisplay.textContent = text; messageDisplay.style.display = 'block';
+             void messageDisplay.offsetWidth; messageDisplay.style.opacity = 1; 
+            messageDisplay.classList.add('glitch'); 
+            setTimeout(() => messageDisplay.classList.remove('glitch'), 800);
+            messageTimeout = setTimeout(() => {
+                 messageDisplay.style.opacity = 0;
+                 setTimeout(() => { if (messageDisplay.style.opacity == 0) { messageDisplay.textContent = hyperChatter[Math.floor(Math.random() * hyperChatter.length)]; messageDisplay.style.opacity = 1; } }, 500); 
+                messageTimeout = null; 
+            }, duration);
+        }
+
+        // ☆ Game Loop ☆
+        function gameLoop(timestamp) { /* ... no changes needed here ... */ 
+            const deltaTime = timestamp - lastTimestamp; lastTimestamp = timestamp;
+             const cappedDeltaTime = Math.min(deltaTime, 50); 
+            update(cappedDeltaTime); render(); 
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        // ☆ Handle Keyboard Input & Resize ☆
+        document.addEventListener('keydown', (e) => { /* ... */ if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(e.key.toLowerCase())) { e.preventDefault(); } switch (e.key.toLowerCase()) { case 'arrowup': case 'w': keys.up = true; break; case 'arrowdown': case 's': keys.down = true; break; case 'arrowleft': case 'a': keys.left = true; break; case 'arrowright': case 'd': keys.right = true; break; } });
+        document.addEventListener('keyup', (e) => { /* ... */ switch (e.key.toLowerCase()) { case 'arrowup': case 'w': keys.up = false; break; case 'arrowdown': case 's': keys.down = false; break; case 'arrowleft': case 'a': keys.left = false; break; case 'arrowright': case 'd': keys.right = false; break; } });
+        window.addEventListener('resize', resizeCanvases);
+
+        // ☆ Ambient Chatter Interval ☆
+        setInterval(() => { /* ... */ if (!messageTimeout && messageDisplay.style.opacity != 0) { messageDisplay.textContent = hyperChatter[Math.floor(Math.random() * hyperChatter.length)]; } }, 12000); 
+
+        // ☆ Start the Game! ☆
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
