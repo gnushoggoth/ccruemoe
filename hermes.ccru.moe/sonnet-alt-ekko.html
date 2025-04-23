@@ -586,4 +586,172 @@
         <footer>
             <p>HERMES-3 PROTOCOL // DRIFT::SIGNAL // <span class="glitch-hover">NOUS::RESEARCH</span></p>
             <div class="binary-footer">
-                01001000
+                01001000 01000101 01010010 01001101 01000101 01010011 00101101 00110011 00100000 01010011 01001001 01000111 01001110 01000001 01001100 00100000 01000111 01010010 01001001 01000100 00100000 00111001 00110011 00110010 00110101 00110001 00100000 01010111 01000101 01010010 01001110 01001001 01000011 01001011 01000101 00101101 01001000 01011001 01010000 01000101 01010010 01010011 01010100 01001001 01010100 01001001 01001111 01001110 00101101 00110000 00110010 00110100 00110111 00100000
+            </div>
+            <div class="copyright">Copyright 2025-̸̧̀Ψ̴̢</div>
+        </footer>
+    </div>
+    
+    <!-- Interactive elements -->
+    <script>
+        // Glitch effect on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const sections = document.querySelectorAll('section');
+                sections.forEach((section, index) => {
+                    setTimeout(() => {
+                        section.classList.add('section-animate');
+                    }, index * 200);
+                });
+            }, 500);
+            
+            // Random glitch text effect
+            setInterval(() => {
+                const glitchText = document.querySelector('.glitch-text');
+                if (glitchText) {
+                    glitchText.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                    setTimeout(() => {
+                        glitchText.style.transform = 'translate(0, 0)';
+                    }, 100);
+                }
+            }, 3000);
+            
+            // Create floating cybernetic symbols in background
+            createFloatingSymbols();
+        });
+        
+        function createFloatingSymbols() {
+            const symbols = ['⌬', '⌭', '⍉', '⎔', '⌘', '⚠', '◊', '⌖', '⌗', '⏣', '⏧', '⌽', '⍟', '⍰', '⌰'];
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 15; i++) {
+                const symbol = document.createElement('div');
+                symbol.classList.add('cyber-symbol');
+                symbol.style.position = 'fixed';
+                symbol.style.left = `${Math.random() * 100}vw`;
+                symbol.style.top = `${Math.random() * 100}vh`;
+                symbol.style.opacity = '0.15';
+                symbol.style.fontSize = `${Math.random() * 20 + 10}px`;
+                symbol.style.transform = `rotate(${Math.random() * 360}deg)`;
+                symbol.style.pointerEvents = 'none';
+                symbol.style.zIndex = '-1';
+                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // Slow drift animation
+                symbol.style.animation = `drift ${Math.random() * 60 + 60}s linear infinite`;
+                
+                document.body.appendChild(symbol);
+            }
+            
+            // Add the drift keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes drift {
+                    0% { transform: translate(0, 0) rotate(0deg); }
+                    25% { transform: translate(${Math.random() * 100}px, ${Math.random() * 100}px) rotate(${Math.random() * 360}deg); }
+                    50% { transform: translate(${Math.random() * -100}px, ${Math.random() * 100}px) rotate(${Math.random() * 360}deg); }
+                    75% { transform: translate(${Math.random() * -100}px, ${Math.random() * -100}px) rotate(${Math.random() * 360}deg); }
+                    100% { transform: translate(0, 0) rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Terminal typing effect
+        document.querySelectorAll('.terminal').forEach(terminal => {
+            const originalText = terminal.innerText;
+            terminal.innerText = '';
+            
+            let i = 0;
+            function typeChar() {
+                if (i < originalText.length) {
+                    terminal.innerText += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeChar, Math.random() * 50 + 20);
+                } else {
+                    terminal.innerHTML += ' <span class="cursor"></span>';
+                }
+            }
+            
+            // Start typing when the element is in view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(typeChar, 500);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            observer.observe(terminal);
+        });
+        
+        // Cursor click effect
+        document.addEventListener('click', function(e) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            ripple.style.position = 'fixed';
+            ripple.style.width = '2px';
+            ripple.style.height = '2px';
+            ripple.style.background = 'var(--accent2)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.animation = 'ripple-effect 1s ease-out forwards';
+            ripple.style.zIndex = '1000';
+            ripple.style.pointerEvents = 'none';
+            document.body.appendChild(ripple);
+            
+            setTimeout(() => {
+                document.body.removeChild(ripple);
+            }, 1000);
+        });
+        
+        // Add ripple effect keyframes
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple-effect {
+                0% {
+                    width: 2px;
+                    height: 2px;
+                    opacity: 1;
+                    box-shadow: 0 0 5px var(--accent2);
+                }
+                100% {
+                    width: 100px;
+                    height: 100px;
+                    opacity: 0;
+                    box-shadow: 0 0 20px var(--accent1);
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+        
+        // Nav link hover effect with data corruption
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('mouseover', function() {
+                const originalText = this.innerText;
+                let corruptedText = '';
+                for (let i = 0; i < originalText.length; i++) {
+                    if (Math.random() > 0.8) {
+                        const charCode = originalText.charCodeAt(i) + (Math.random() > 0.5 ? 1 : -1);
+                        corruptedText += String.fromCharCode(charCode);
+                    } else {
+                        corruptedText += originalText[i];
+                    }
+                }
+                this.setAttribute('data-original', originalText);
+                this.innerText = corruptedText;
+            });
+            
+            link.addEventListener('mouseout', function() {
+                if (this.hasAttribute('data-original')) {
+                    this.innerText = this.getAttribute('data-original');
+                    this.removeAttribute('data-original');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
