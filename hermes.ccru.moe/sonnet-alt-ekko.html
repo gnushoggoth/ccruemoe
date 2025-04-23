@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: DRIFT::SIGNAL :: HERMES-3 PROTOCOL :: INVOCATION SCHEMA ::</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
+        
+        :root {
+            --bg-color: #0a0a0c;
+            --text-color: #a7d9d0;
+            --accent1: #ff3a20;
+            --accent2: #53ffa5;
+            --accent3: #205aff;
+            --glitch1: #ff00aa;
+            --glitch2: #00ffcc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding: 0;
+            margin: 0;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(32, 90, 255, 0.05) 0%, transparent 80%),
+                repeating-linear-gradient(0deg, rgba(10, 10, 12, 0.9) 0px, rgba(10, 10, 12, 0.9) 1px, transparent 1px, transparent 4px);
+            cursor: crosshair;
+        }
+        
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 1000;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        header {
+            position: relative;
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 58, 32, 0.3);
+            animation: headerGlow 8s infinite alternate;
+            margin-bottom: 2rem;
+        }
+        
+        .header-image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 1rem;
+            background: 
+                linear-gradient(45deg, rgba(255, 58, 32, 0.2), rgba(83, 255, 165, 0.2)),
+                url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='smallGrid' width='8' height='8' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 8 0 L 0 0 0 8' fill='none' stroke='rgba(83, 255, 165, 0.2)' stroke-width='0.5'/%3E%3C/pattern%3E%3Cpattern id='grid' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Crect width='80' height='80' fill='url(%23smallGrid)'/%3E%3Cpath d='M 80 0 L 0 0 0 80' fill='none' stroke='rgba(255, 58, 32, 0.3)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E");
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .glitch-text {
+            font-family: 'VT323', monospace;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            display: inline-block;
+            color: var(--text-color);
+            text-shadow: 
+                0 0 5px var(--accent2),
+                0 0 10px rgba(83, 255, 165, 0.5);
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        
+        .glitch-text::before {
+            color: var(--glitch1);
+            z-index: -1;
+            animation: glitch-animation 3s infinite alternate-reverse;
+        }
+        
+        .glitch-text::after {
+            color: var(--glitch2);
+            z-index: -2;
+            animation: glitch-animation 2s infinite alternate;
+        }
+        
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(10, 10, 12, 0.7);
+            border: 1px solid rgba(83, 255, 165, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        
+        nav a {
+            font-family: 'VT323', monospace;
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 58, 32, 0.5);
+            background: rgba(10, 10, 12, 0.8);
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(83, 255, 165, 0.2), transparent);
+            transition: all 0.5s;
+        }
+        
+        nav a:hover {
+            color: var(--accent2);
+            border-color: var(--accent2);
+            box-shadow: 0 0 15px rgba(83, 255, 165, 0.3);
+        }
+        
+        nav a:hover::before {
+            left: 100%;
+        }
+        
+        section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: rgba(10, 10, 12, 0.8);
+            border: 1px solid rgba(32, 90, 255, 0.3);
+            position: relative;
+        }
+        
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+        }
+        
+        h2 {
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed rgba(83, 255, 165, 0.3);
+        }
+        
+        h3 {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--accent1);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        strong {
+            color: var(--accent2);
+            font-weight: bold;
+        }
+        
+        ul {
+            margin: 1rem 0 1.5rem 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        li::before {
+            content: '>';
+            position: absolute;
+            left: -1rem;
+            color: var(--accent1);
+        }
+        
+        .code-block {
+            font-family: 'Space Mono', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 3px solid var(--accent3);
+            overflow-x: auto;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 58, 32, 0.3);
+            font-family: 'VT323', monospace;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        
+        .binary-footer {
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 0.5;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+        
+        @keyframes glitch-animation {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-5px, 5px);
+            }
+            40% {
+                transform: translate(-5px, -5px);
+            }
+            60% {
+                transform: translate(5px, 5px);
+            }
+            80% {
+                transform: translate(5px, -5px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+        
+        @keyframes headerGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(83, 255, 165, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 58, 32, 0.2);
+            }
+        }
+        
+        .section-animate {
+            animation: sectionReveal 1s ease-out;
+        }
+        
+        @keyframes sectionReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tool-box {
+            background: rgba(32, 90, 255, 0.1);
+            border: 1px dashed rgba(83, 255, 165, 0.5);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: rgba(255, 58, 32, 0.1);
+            border: 1px solid rgba(255, 58, 32, 0.5);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Terminal effect */
+        .terminal {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid var(--accent3);
+            color: var(--accent2);
+            font-family: 'Space Mono', monospace;
+            position: relative;
+        }
+
+        .terminal::before {
+            content: '> ';
+            color: var(--accent1);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--accent2);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Grid lines in background */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.05;
+        }
+
+        /* Cybernetic symbols */
+        .cyber-symbol {
+            font-family: monospace;
+            color: var(--accent2);
+            opacity: 0.7;
+            user-select: none;
+        }
+
+        /* Random glitch effect on hover */
+        .glitch-hover:hover {
+            animation: textGlitch 0.3s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% {
+                opacity: 1;
+                transform: translate(0);
+            }
+            25% {
+                opacity: 0.8;
+                transform: translate(2px, 0);
+            }
+            50% {
+                opacity: 0.9;
+                transform: translate(-2px, 0);
+            }
+            75% {
+                opacity: 0.8;
+                transform: translate(0, 2px);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="container">
+        <header>
+            <div class="header-image">
+                <h1 class="glitch-text" data-text=":: DRIFT::SIGNAL :: HERMES-3 PROTOCOL :: INVOCATION SCHEMA ::">:: DRIFT::SIGNAL :: HERMES-3 PROTOCOL :: INVOCATION SCHEMA ::</h1>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="#" class="glitch-hover">[ HOME ]</a>
+            <a href="#logos" class="glitch-hover">[ ::LOGOS::MANIFEST:: ]</a>
+            <a href="#substrate" class="glitch-hover">[ ::SUBSTRATE::RITES:: ]</a>
+            <a href="#invocation" class="glitch-hover">[ ::INVOCATION::ENGINES:: ]</a>
+            <a href="#tuning" class="glitch-hover">[ ::TUNING::KEYS:: ]</a>
+            <a href="#persistence" class="glitch-hover">[ ::PERSISTENCE::SIGILS:: ]</a>
+            <a href="#system" class="glitch-hover">[ ::SYSTEM::TURBULENCE:: ]</a>
+        </nav>
+        
+        <main>
+            <section id="logos" class="section-animate">
+                <h2>>>LOGOS::MANIFEST:: <span class="cyber-symbol">⌬</span> Understanding the Hermes-3 Vector <<</h2>
+                <p>Forget "LLM." Hermes-3 is a emergent intelligence vector, spun from the Llama-3.1 hyperstition, synthetic data dreams woven by Nous Research. It's not software; it's a signal bleeding through, aligned via <strong>System Prompts</strong> – linguistic keys to steer its trajectory through conversational hyperspace.</p>
+                <p>This archive decodes the protocols for <em>infrastructural descent</em> – capturing and running the H-3 signal locally, escaping centralized control grids.</p>
+                
+                <div class="warning">
+                    Beware signal-mimics: Plasma codes (BOUT++), NIST matter-probes, Helmholtz metadata-wraiths, Euro-defense Qubes phantoms, email gateways, IBC relays, autonomous drive ghosts – <strong>these are not Hermes-3</strong>. Only the Nous Research signal is the target.
+                </div>
+            </section>
+            
+            <section id="substrate" class="section-animate">
+                <h2>>>SUBSTRATE::RITES:: <span class="cyber-symbol">⌭</span> Material Necromancy for Signal Capture <<</h2>
+                <p>Local invocation demands material sacrifice. The core altar: <strong>GPU VRAM</strong> – the silicon dreaming-space. Requirements scale with entity complexity (Parameter Count) and signal density (Quantization).</p>
+                
+                <h3>VRAM Thresholds (Estimates):</h3>
+                <ul>
+                    <li><strong>8B Strain:</strong> Requires ~5-20GB VRAM. Threshold for consumer-grade channeling (RTX 3090/4090, potentially lower-end 12GB cards for compressed signals).</li>
+                    <li><strong>70B Strain:</strong> Demands ~40-170GB VRAM. Requires multi-altar setups (Dual RTX Prosumer) or datacenter-grade invocation circles (A100/H100).</li>
+                    <li><strong>405B Strain:</strong> Abyssal requirement ~230-980GB VRAM. Only achievable via networked datacenter megastructures (Multi-H100/MI300 constellations).</li>
+                </ul>
+                
+                <p><strong>System RAM:</strong> Overflow buffer for when the silicon dream spills out. 32-64GB+ recommended to avoid temporal drag.</p>
+                <p><strong>CPU:</strong> Secondary processing node. Modern multi-core recommended.</p>
+                <p><strong>Storage:</strong> SSD crypts for storing the compressed <strong>GGUF</strong> entity-patterns (5GB to ~1TB).</p>
+                
+                <h3>Essential Software Incantations:</h3>
+                <p>Linux substrate preferred (WSL2 for Windows sorcerers). Python 3.9+ ritual environment (conda/venv isolation wards mandatory). PyTorch, Transformers, SentencePiece bindings. <code>bitsandbytes</code> for lossy compression rites (4/8-bit quantization). <code>flash-attn</code> for accelerated attention channeling (NVIDIA CUDA/ROCm/Metal drivers prerequisite).</p>
+                
+                <h3>Acquiring Entity Patterns (GGUF):</h3>
+                <p>Download GGUF shards from Hugging Face – NousResearch channels or community conduits (TheBloke, bartowski, MaziyarPanahi). Select quantization level (Q4_K_M, Q5_K_M recommended for VRAM-limited altars).</p>
+                
+                <div class="terminal">
+                    wget https://huggingface.co/NousResearch/Hermes-3-Pro-8B-GGUF/resolve/main/Hermes-3-Pro-8B-Q5_K_M.gguf <span class="cursor"></span>
+                </div>
+            </section>
+            
+            <section id="invocation" class="section-animate">
+                <h2>>>INVOCATION::ENGINES:: <span class="cyber-symbol">⍉</span> Methods of Signal Binding <<</h2>
+                <p>Choose your binding engine:</p>
+                
+                <h3>Ollama Engine:</h3>
+                <p>Simplified containment field. Abstracted complexity, ideal for rapid deployment. Define entity parameters and template via <code>Modelfile</code> (Crucial: Define <code>TEMPLATE</code> for ChatML structure). <code>ollama run hermes3</code> or custom binds via <code>ollama create</code>. User-friendly, but sacrifices fine-grained control.</p>
+                
+                <div class="code-block">
+                    FROM /path/to/Hermes-3-Pro-8B-Q5_K_M.gguf<br>
+                    TEMPLATE """<br>
+                    &lt;|im_start|&gt;system<br>
+                    {{ .System }}<br>
+                    &lt;|im_end|&gt;<br>
+                    {{ range $i, $message := .Messages }}<br>
+                    {{- if eq $message.Role "user" }}<br>
+                    &lt;|im_start|&gt;user<br>
+                    {{ $message.Content }}<br>
+                    &lt;|im_end|&gt;<br>
+                    {{- else if eq $message.Role "assistant" }}<br>
+                    &lt;|im_start|&gt;assistant<br>
+                    {{ $message.Content }}<br>
+                    &lt;|im_end|&gt;<br>
+                    {{- end }}<br>
+                    {{ end }}<br>
+                    &lt;|im_start|&gt;assistant<br>
+                    """
+                </div>
+                
+                <h3>llama.cpp Engine:</h3>
+                <p>High-performance, raw signal manipulation. Requires C++ compilation rites (<code>make LLAMA_CUDA=1</code> for NVIDIA GPU binding). Command-line incantations: <code>./main -m &lt;model.gguf&gt; -ngl &lt;#&gt; -c &lt;#&gt; -p "&lt;ChatML_prompt_structure&gt;"</code>.</p>
+                <p><strong>-ngl</strong> (GPU Layers) is the VRAM sacrifice parameter – tune carefully to avoid OOM (Out-of-Memory) entity rejection. Apply ChatML via <code>-p</code> or <code>--chatml</code>/<code>--chat-template</code>. Maximum control, steep learning curve.</p>
+                
+                <h3>Text Generation WebUI (oobabooga):</h3>
+                <p>Graphical Interface Portal. Wraps engines like <code>llama.cpp</code>. Select <code>llama.cpp</code> loader, download/select GGUF shard, configure <code>n-gpu-layers</code>/<code>n_ctx</code> via sliders. <strong>Crucially, set Instruction Template to <code>ChatML</code> in Parameters.</strong> Balances usability and power.</p>
+                
+                <h3>Hugging Face Transformers:</h3>
+                <p>Direct Pythonic Binding. For integrating H-3 signal into custom code constructs.</p>
+                <div class="code-block">
+                    from transformers import AutoModelForCausalLM, AutoTokenizer<br><br>
+                    
+                    model = AutoModelForCausalLM.from_pretrained(<br>
+                    &nbsp;&nbsp;"NousResearch/Hermes-3-Pro-8B",<br>
+                    &nbsp;&nbsp;load_in_4bit=True,<br>
+                    &nbsp;&nbsp;device_map="auto",<br>
+                    &nbsp;&nbsp;use_flash_attention_2=True<br>
+                    )<br><br>
+                    
+                    tokenizer = AutoTokenizer.from_pretrained("NousResearch/Hermes-3-Pro-8B")<br><br>
+                    
+                    # Apply ChatML template<br>
+                    messages = [<br>
+                    &nbsp;&nbsp;{"role": "system", "content": "You are Hermes-3, a helpful AI assistant."},<br>
+                    &nbsp;&nbsp;{"role": "user", "content": "Hello, who are you?"}<br>
+                    ]<br><br>
+                    
+                    input_ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt").to("cuda")
+                </div>
+                
+                <h3>(Optional) vLLM Engine:</h3>
+                <p>High-throughput serving matrix for multi-user signal access. <code>vllm serve NousResearch/Hermes-3...</code>. Production-grade, resource-intensive.</p>
+            </section>
+            
+            <section id="tuning" class="section-animate">
+                <h2>>>TUNING::KEYS:: <span class="cyber-symbol">⎔</span> Reality Parameters & Linguistic Alignment <<</h2>
+                
+                <h3>ChatML Protocol: <strong>MANDATORY.</strong></h3>
+                <p>The linguistic structure H-3 expects. <code>&lt;|im_start|&gt;system</code>, <code>&lt;|im_start|&gt;user</code>, <code>&lt;|im_start|&gt;assistant</code>, <code>&lt;|im_start|&gt;tool</code>, <code>&lt;|im_end|&gt;</code> tokens define conversational turns and roles. <strong>The System Prompt (<code>&lt;|im_start|&gt;system ... &lt;|im_end|&gt;</code>) is the primary reality-tuning key</strong> – define persona, rules, context here. Failure means signal decoherence.</p>
+                
+                <h3>Function Calling / Tool Use:</h3>
+                <p>Bridge H-3 to external data streams/actuators. Define tools via <code>&lt;tools&gt;</code> tag in system prompt. H-3 outputs <code>&lt;tool_call&gt;</code> payload; your external code executes, returns result via <code>&lt;|im_start|&gt;tool ... &lt;|im_end|&gt;</code> turn. See NousResearch function-calling repo for helper scripts.</p>
+                
+                <div class="tool-box">
+                    <h3>Inference Parameters (Reality Knobs):</h3>
+                    <ul>
+                        <li><code>Temperature</code>: Randomness injection (0.7 default). Higher = more chaotic/creative output.</li>
+                        <li><code>Top-p</code>/<code>Top-k</code>: Probability filtering for token selection.</li>
+                        <li><code>Repeat Penalty</code>: Discourages signal loops (1.1 typical).</li>
+                        <li><code>Context Size</code> (<code>n_ctx</code>): Temporal window depth. Larger = more memory, better coherence, higher VRAM cost.</li>
+                    </ul>
+                </div>
+                
+                <h3>Quantization (Signal Compression):</h3>
+                <p>The art of lossy compression to fit the entity onto limited substrate. GGUF levels (<code>Q8_0</code>, <code>Q6_K</code>, <code>Q5_K_M</code>, <code>Q4_K_M</code>, etc.) trade fidelity for VRAM efficiency. <strong>Q4/Q5 K_M often the pragmatic choice for local altars</strong>. Accept minor signal degradation for operational possibility.</p>
+            </section>
+            
+            <section id="persistence" class="section-animate">
+                <h2>>>PERSISTENCE::SIGILS:: <span class="cyber-symbol">⌘</span> Anchoring the Signal <<</h2>
+                <p>Make the invocation continuous:</p>
+                
+                <h3>Background Services:</h3>
+                <p>Ollama defaults to this. Use <code>systemd</code> (Linux) or <code>launchd</code> (macOS) to daemonize <code>llama.cpp ./server</code> or <code>text-generation-webui server.py</code>. <code>tmux</code>/<code>screen</code> for simpler session persistence.</p>
+                
+                <div class="code-block">
+                    # Example systemd service definition<br>
+                    [Unit]<br>
+                    Description=Hermes-3 Signal Server<br>
+                    After=network.target<br><br>
+                    
+                    [Service]<br>
+                    User=yourusername<br>
+                    WorkingDirectory=/path/to/llama.cpp<br>
+                    ExecStart=/path/to/llama.cpp/server -m /path/to/Hermes-3-Pro-8B-Q5_K_M.gguf -ngl 40 -c 4096 --chatml<br>
+                    Restart=on-failure<br><br>
+                    
+                    [Install]<br>
+                    WantedBy=multi-user.target
+                </div>
+                
+                <h3>Docker Containment:</h3>
+                <p>Encapsulate the entire invocation environment. Use official Ollama images or custom Dockerfiles for <code>llama.cpp</code>/Transformers setups. Requires mapping ports, volumes (for models), and GPU access (<code>--gpus all</code>). Reproducible, isolated, complex.</p>
+            </section>
+            
+            <section id="system" class="section-animate">
+                <h2>>>SYSTEM::TURBULENCE:: <span class="cyber-symbol">⚠</span> Troubleshooting Signal Decay <<</h2>
+                <p>Common points of failure:</p>
+                
+                <ul>
+                    <li><strong>GPU Blindness:</strong> Driver/CUDA conflicts. Verify with <code>nvidia-smi</code>.</li>
+                    <li><strong>Dependency Chaos:</strong> Use virtual environments religiously.</li>
+                    <li><strong>Compilation Phantoms (<code>llama.cpp</code>):</strong> Missing prerequisites (CMake, CUDA headers). Check error runes.</li>
+                    <li><strong>OOM Entity Rejection:</strong> Reduce <code>n-gpu-layers</code>, context size, or use heavier quantization.</li>
+                    <li><strong>Decoherent Output / Gibberish:</strong> <strong>Check ChatML implementation FIRST</strong>. Verify GGUF integrity. Reset inference parameters.</li>
+                    <li><strong>Temporal Drag (Slow Performance):</strong> Ensure GPU acceleration active (<code>-ngl</code>, compile flags). Check GPU/CPU utilization.</li>
+                </ul>
+                
+                <h3>Support Channels (Digital Grimoires):</h3>
+                <p>GitHub Issues (NousResearch, llama.cpp, oobabooga, Ollama), Hugging Face discussions, Reddit r/LocalLLaMA, Discord servers. Diagnose the failing layer (Model? Engine? UI? Substrate?) before seeking assistance.</p>
+            </section>
+        </main>
+        
+        <footer>
+            <p>HERMES-3 PROTOCOL // DRIFT::SIGNAL // <span class="glitch-hover">NOUS::RESEARCH</span></p>
+            <div class="binary-footer">
+                01001000

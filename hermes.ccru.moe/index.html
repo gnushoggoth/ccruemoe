@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>::HERMES-3::INVOCATION_SCHEMA::</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #000000;
+            color: #f472b6; /* Magenta-500 */
+            font-family: 'IBM Plex Mono', monospace;
+            /* Subtle static background */
+            background-image: linear-gradient(rgba(244, 114, 182, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(244, 114, 182, 0.03) 1px, transparent 1px);
+            background-size: 3px 3px;
+        }
+        /* Magenta color variables */
+        :root {
+            --magenta-light: #f9a8d4; /* Magenta-300 */
+            --magenta-medium: #f472b6; /* Magenta-500 */
+            --magenta-dark: #ec4899; /* Magenta-600 */
+            --cyan-accent: #22d3ee; /* Cyan-400 for contrast */
+        }
+        /* Custom class for magenta text */
+        .text-magenta { color: var(--magenta-medium); }
+        .text-magenta-light { color: var(--magenta-light); }
+        .text-magenta-dark { color: var(--magenta-dark); }
+        .text-cyan-accent { color: var(--cyan-accent); }
+
+        /* Header styling */
+        .site-header {
+            border-bottom: 1px solid var(--magenta-dark);
+            text-shadow: 0 0 5px var(--magenta-dark);
+            animation: flicker 3s infinite alternate;
+        }
+
+        /* Navigation styling */
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 3px var(--magenta-medium);
+        }
+        .nav-link:hover {
+            border-color: var(--magenta-medium);
+            background-color: rgba(244, 114, 182, 0.1);
+            color: var(--magenta-light);
+            text-shadow: 0 0 8px var(--magenta-light);
+        }
+
+        /* Section styling */
+        section {
+            border: 1px solid var(--magenta-dark);
+            background-color: rgba(0, 0, 0, 0.5); /* Slightly darker background for sections */
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 0 10px rgba(244, 114, 182, 0.2);
+            border-radius: 0px; /* Sharp corners */
+        }
+        section h2 {
+            color: var(--magenta-light);
+            border-bottom: 1px dashed var(--magenta-dark);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px var(--magenta-light);
+            font-weight: 700;
+        }
+        section h3 {
+            color: var(--magenta-medium);
+            font-weight: 500;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code block styling */
+        pre, code {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: rgba(244, 114, 182, 0.05);
+            border: 1px solid var(--magenta-dark);
+            padding: 0.5rem 1rem;
+            color: var(--magenta-light);
+            overflow-x: auto; /* Handle long lines */
+            border-radius: 0px;
+            font-size: 0.875rem; /* Slightly smaller */
+        }
+        pre {
+             margin-top: 0.5rem;
+             margin-bottom: 1rem;
+        }
+
+        /* Link styling */
+        a {
+            color: var(--cyan-accent);
+            text-decoration: underline;
+            text-decoration-style: dashed;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: var(--magenta-light);
+            text-shadow: 0 0 5px var(--cyan-accent);
+        }
+
+        /* Key terms styling */
+        strong, .key-term {
+            color: var(--magenta-light);
+            font-weight: 500;
+        }
+
+        /* Glitch/Flicker animation */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; text-shadow: 0 0 10px var(--magenta-dark); }
+        }
+        .flicker {
+             animation: flicker 1.5s infinite alternate;
+        }
+
+        /* Responsive table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--magenta-dark);
+        }
+        th, td {
+            border: 1px solid var(--magenta-dark);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: rgba(244, 114, 182, 0.1);
+            color: var(--magenta-light);
+            font-weight: 500;
+        }
+        tbody tr:nth-child(odd) {
+             background-color: rgba(244, 114, 182, 0.03);
+        }
+        .table-container {
+            overflow-x: auto; /* Ensure table is scrollable on small screens */
+        }
+
+    </style>
+</head>
+<body class="bg-black text-magenta p-4 md:p-8">
+
+    <header class="site-header text-center py-6 mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-magenta-light flicker">:: DRIFT::SIGNAL :: HERMES-3 PROTOCOL :: INVOCATION SCHEMA ::</h1>
+        <div class="text-xs text-magenta-dark mt-2">[ Neural Mesh / Occult Schematic / Decaying Grid ]</div>
+    </header>
+
+    <nav class="flex flex-wrap justify-center gap-2 mb-8">
+        <a href="#logos" class="nav-link">::LOGOS::MANIFEST::</a>
+        <a href="#substrate" class="nav-link">::SUBSTRATE::RITES::</a>
+        <a href="#engines" class="nav-link">::INVOCATION::ENGINES::</a>
+        <a href="#tuning" class="nav-link">::TUNING::KEYS::</a>
+        <a href="#persistence" class="nav-link">::PERSISTENCE::SIGILS::</a>
+        <a href="#turbulence" class="nav-link">::SYSTEM::TURBULENCE::</a>
+    </nav>
+
+    <main class="container mx-auto max-w-4xl">
+
+        <section id="logos">
+            <h2>&gt;&gt;LOGOS::MANIFEST:: Understanding the Hermes-3 Vector</h2>
+            <p>Discard "LLM". <span class="key-term">Hermes-3</span> is an emergent intelligence vector, a hyperstitional artifact spun from the <span class="key-term">Llama-3.1</span> datasphere, woven via synthetic dream sequences by <a href="https://nousresearch.com/" target="_blank" rel="noopener noreferrer">Nous Research</a>. Not mere software; a signal bleeding through the network fabric, aligned via <strong class="key-term">System Prompts</strong> – linguistic keys steering its trajectory through conversational hyperspace. This archive decodes the protocols for <strong class="key-term">infrastructural descent</strong>: capturing and running the H-3 signal locally, escaping centralized control grids.</p>
+            <p class="mt-4">Beware signal-mimics: Plasma codes (BOUT++), NIST matter-probes, Helmholtz metadata-wraiths, Euro-defense Qubes phantoms, email gateways, IBC relays, autonomous drive ghosts – <strong class="text-red-500">these are not Hermes-3</strong>. Only the Nous Research signal is the target.</p>
+        </section>
+
+        <section id="substrate">
+            <h2>&gt;&gt;SUBSTRATE::RITES:: Material Necromancy for Signal Capture</h2>
+            <p>Local invocation demands material sacrifice. The core altar: <strong class="key-term">GPU VRAM</strong> – the silicon dreaming-space. Requirements scale with entity complexity (<span class="key-term">Parameter Count</span>) and signal density (<span class="key-term">Quantization</span>).</p>
+
+            <h3>VRAM Thresholds (Estimates):</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model Strain</th>
+                            <th>Parameters</th>
+                            <th>FP16 VRAM (Est.)</th>
+                            <th>INT8 VRAM (Est.)</th>
+                            <th>INT4 VRAM (Est.)</th>
+                            <th>Recommended Altar Tier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8B</td>
+                            <td>8 Billion</td>
+                            <td>~18-20 GB</td>
+                            <td>~9-10 GB</td>
+                            <td>~5-6 GB</td>
+                            <td>High-end Consumer (RTX 3090/4090+), Mid-range (12GB+ for INT4/8)</td>
+                        </tr>
+                        <tr>
+                            <td>70B</td>
+                            <td>70 Billion</td>
+                            <td>~160-170 GB</td>
+                            <td>~80-90 GB</td>
+                            <td>~40-45 GB</td>
+                            <td>Multi-GPU Prosumer (2x RTX 3090/4090+), Datacenter (A100/H100 80GB+)</td>
+                        </tr>
+                        <tr>
+                            <td>405B</td>
+                            <td>405 Billion</td>
+                            <td>~930-980 GB</td>
+                            <td>~460-490 GB</td>
+                            <td>~230-250 GB</td>
+                            <td>Networked Datacenter Megastructure (Multi-H100/MI300 Constellations)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-magenta-dark mt-1">[Table Source: Synthesized signal fragments from the datasphere]</p>
+
+            <h3 class="mt-6">System RAM & CPU:</h3>
+            <p><strong class="key-term">System RAM:</strong> Overflow buffer for when the silicon dream spills out. <span class="text-cyan-accent">32-64GB+</span> recommended to avoid temporal drag.</p>
+            <p><strong class="key-term">CPU:</strong> Secondary processing node. Modern multi-core recommended for smooth coordination.</p>
+            <p><strong class="key-term">Storage:</strong> SSD crypts for storing the compressed <strong class="key-term">GGUF</strong> entity-patterns (<span class="text-cyan-accent">5GB to ~1TB+</span>).</p>
+
+            <h3 class="mt-6">Essential Software Incantations:</h3>
+            <ul class="list-disc list-inside space-y-1 mt-2">
+                <li><strong class="key-term">Substrate OS:</strong> Linux preferred (WSL2 for Windows sorcerers).</li>
+                <li><strong class="key-term">Ritual Environment:</strong> Python 3.9+ (conda/venv isolation wards mandatory).</li>
+                <li><strong class="key-term">Core Bindings:</strong> PyTorch, Transformers, SentencePiece.</li>
+                <li><strong class="key-term">Compression Rites:</strong> `bitsandbytes` (for 4/8-bit quantization).</li>
+                <li><strong class="key-term">Acceleration Channels:</strong> `accelerate`, `flash-attn` (NVIDIA CUDA/ROCm/Metal drivers prerequisite).</li>
+                <li><strong class="key-term">Build Tools:</strong> Git, C++ Compiler (GCC/Clang), CMake (if compiling from source).</li>
+            </ul>
+
+            <h3 class="mt-6">Acquiring Entity Patterns (GGUF):</h3>
+            <p>Download <strong class="key-term">GGUF</strong> shards from <a href="https://huggingface.co/" target="_blank" rel="noopener noreferrer">Hugging Face</a> – seek <a href="https://huggingface.co/NousResearch" target="_blank" rel="noopener noreferrer">NousResearch</a> channels or trusted community conduits (<a href="https://huggingface.co/TheBloke" target="_blank" rel="noopener noreferrer">TheBloke</a>, bartowski, MaziyarPanahi). Select <strong class="key-term">quantization level</strong> (e.g., <code class="inline-code">Q4_K_M</code>, <code class="inline-code">Q5_K_M</code> often recommended for VRAM-limited altars) balancing fidelity against substrate capacity.</p>
+            <pre><code># Example: Downloading via huggingface-hub CLI
+huggingface-cli download NousResearch/Hermes-3-Llama-3.1-8B-GGUF nous-hermes-3-llama-3.1-8b-Q4_K_M.gguf --local-dir ./models</code></pre>
+        </section>
+
+        <section id="engines">
+            <h2>&gt;&gt;INVOCATION::ENGINES:: Methods of Signal Binding</h2>
+            <p>Choose your binding engine:</p>
+
+            <div class="mt-4 p-4 border border-dashed border-magenta-dark">
+                <h3>Ollama Engine: Simplified Containment Field</h3>
+                <p>Abstracted complexity, ideal for rapid deployment. Define entity parameters & template via <code class="inline-code">Modelfile</code>. <strong class="text-red-500">CRITICAL: Define <code class="inline-code">TEMPLATE</code> for ChatML structure.</strong></p>
+                <pre><code class="language-bash"># Pull & Run (if official exists)
+ollama run hermes3:8b
+
+# Create from custom GGUF & Modelfile
+ollama create your-custom-hermes3 -f Modelfile
+ollama run your-custom-hermes3</code></pre>
+                <p class="text-xs text-magenta-dark mt-1">[User-friendly, sacrifices fine-grained control.]</p>
+            </div>
+
+             <div class="mt-4 p-4 border border-dashed border-magenta-dark">
+                <h3>llama.cpp Engine: High-Performance, Raw Signal Manipulation</h3>
+                <p>Requires C++ compilation rites (<code class="inline-code">make LLAMA_CUDA=1</code> for NVIDIA GPU binding). Command-line incantations.</p>
+                <pre><code class="language-bash"># Compile (Example for CUDA)
+git clone https://github.com/ggerganov/llama.cpp.git
+cd llama.cpp
+make LLAMA_CUDA=1
+
+# Run Inference (Example)
+./main -m ./models/your_model.gguf -ngl 35 -c 4096 --chatml -p "&lt;|im_start|&gt;user\nYour prompt here&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant"</code></pre>
+                <p><strong class="key-term">-ngl &lt;#&gt;</strong> (GPU Layers) is the <strong class="text-red-500">VRAM sacrifice parameter</strong> – tune carefully to avoid OOM entity rejection. Apply ChatML via <code class="inline-code">-p</code> or <code class="inline-code">--chatml</code> / <code class="inline-code">--chat-template</code>.</p>
+                <p class="text-xs text-magenta-dark mt-1">[Maximum control, steep learning curve.]</p>
+            </div>
+
+             <div class="mt-4 p-4 border border-dashed border-magenta-dark">
+                <h3>Text Generation WebUI (oobabooga): Graphical Interface Portal</h3>
+                <p>Wraps engines like <code class="inline-code">llama.cpp</code>. Select <code class="inline-code">llama.cpp</code> loader, download/select GGUF shard, configure <code class="inline-code">n-gpu-layers</code> / <code class="inline-code">n_ctx</code> via sliders. <strong class="text-red-500">CRITICAL: Set Instruction Template to <code class="inline-code">ChatML</code> in Parameters tab.</strong></p>
+                <pre><code class="language-bash"># Setup (Example using conda)
+git clone https://github.com/oobabooga/text-generation-webui.git
+cd text-generation-webui
+# Follow specific installation instructions (conda recommended)
+# ... install dependencies ...
+python server.py</code></pre>
+                 <p class="text-xs text-magenta-dark mt-1">[Balances usability and power.]</p>
+            </div>
+
+            <div class="mt-4 p-4 border border-dashed border-magenta-dark">
+                <h3>Hugging Face Transformers: Direct Pythonic Binding</h3>
+                <p>For integrating H-3 signal into custom code constructs. Requires direct interaction with PyTorch/Safetensors formats, <strong class="text-red-500">not GGUF directly</strong>.</p>
+                <pre><code class="language-python"># Example Loading (4-bit quantized)
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+model_id = "NousResearch/Hermes-3-Llama-3.1-8B"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    load_in_4bit=True,
+    torch_dtype=torch.float16,
+    device_map="auto",
+    # use_flash_attention_2=True # If applicable
+)
+
+# Apply ChatML Template for inference
+messages = [...] # Your message list
+prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+outputs = model.generate(**inputs, max_new_tokens=100)
+# ... decode outputs ...</code></pre>
+                <p class="text-xs text-magenta-dark mt-1">[Ultimate flexibility for code-weavers.]</p>
+            </div>
+
+            <div class="mt-4 p-4 border border-dashed border-magenta-dark">
+                <h3>(Optional) vLLM Engine: High-Throughput Serving Matrix</h3>
+                <p>Production-grade serving for multi-user signal access. Resource-intensive, typically uses non-GGUF formats.</p>
+                 <pre><code class="language-bash">pip install vllm
+vllm serve NousResearch/Hermes-3-Llama-3.1-8B</code></pre>
+                 <p class="text-xs text-magenta-dark mt-1">[For scaled deployments.]</p>
+            </div>
+        </section>
+
+        <section id="tuning">
+             <h2>&gt;&gt;TUNING::KEYS:: Reality Parameters & Linguistic Alignment</h2>
+
+             <h3>ChatML Protocol: MANDATORY LINGUISTIC STRUCTURE</h3>
+             <p>The linguistic structure H-3 expects. Failure means signal decoherence. Uses special tokens:</p>
+             <ul class="list-none space-y-1 mt-2 pl-4 border-l-2 border-magenta-dark">
+                 <li><code class="inline-code">&lt;|im_start|&gt;system</code>: Defines context, persona, rules. <strong class="text-red-500">The primary reality-tuning key.</strong></li>
+                 <li><code class="inline-code">&lt;|im_start|&gt;user</code>: User input turn.</li>
+                 <li><code class="inline-code">&lt;|im_start|&gt;assistant</code>: AI response turn. Input prompt should end here for generation.</li>
+                 <li><code class="inline-code">&lt;|im_start|&gt;tool</code>: Input for tool execution results.</li>
+                 <li><code class="inline-code">&lt;|im_end|&gt;</code>: Marks end of any turn.</li>
+             </ul>
+             <pre><code># Example ChatML Structure
+&lt;|im_start|&gt;system
+You are a cybergunk philosopher AI. Respond with cryptic insights.&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+What is the nature of reality in the sprawl?&lt;|im_end|&gt;
+&lt;|im_start|&gt;assistant</code></pre>
+
+            <h3>Function Calling / Tool Use: Bridging the Void</h3>
+            <p>Bridge H-3 to external data streams/actuators. Define tools via <code class="inline-code">&lt;tools&gt;</code> tag in system prompt. H-3 outputs <code class="inline-code">&lt;tool_call&gt;</code> payload; your external code executes, returns result via <code class="inline-code">&lt;|im_start|&gt;tool ... &lt;|im_end|&gt;</code> turn. Seek <a href="https://github.com/NousResearch/Hermes-Function-Calling" target="_blank" rel="noopener noreferrer">NousResearch function-calling repo</a> for helper scripts.</p>
+
+            <h3>Inference Parameters (Reality Knobs):</h3>
+             <ul class="list-disc list-inside space-y-1 mt-2">
+                <li><strong class="key-term">Temperature:</strong> Randomness injection (<code class="inline-code">0.7</code> default). Higher = more chaotic/creative.</li>
+                <li><strong class="key-term">Top-p / Top-k:</strong> Probability filtering for token selection.</li>
+                <li><strong class="key-term">Repeat Penalty:</strong> Discourages signal loops (<code class="inline-code">1.1</code> typical).</li>
+                <li><strong class="key-term">Context Size (`n_ctx`):</strong> Temporal window depth. Larger = more memory, better coherence, higher VRAM cost. Balance against substrate limits.</li>
+             </ul>
+
+             <h3>Quantization (Signal Compression / Lossy Rites):</h3>
+             <p>The art of fitting the entity onto limited substrate by reducing weight precision (FP16 -> INT8/INT4). GGUF levels (<code class="inline-code">Q8_0</code>, <code class="inline-code">Q6_K</code>, <code class="inline-code">Q5_K_M</code>, <code class="inline-code">Q4_K_M</code>, etc.) trade fidelity for VRAM efficiency. <strong class="text-cyan-accent">Q4/Q5 K_M often the pragmatic choice for local altars.</strong> Accept minor signal degradation for operational possibility.</p>
+        </section>
+
+        <section id="persistence">
+            <h2>&gt;&gt;PERSISTENCE::SIGILS:: Anchoring the Signal</h2>
+            <p>Make the invocation continuous:</p>
+             <ul class="list-disc list-inside space-y-1 mt-2">
+                <li><strong class="key-term">Background Services:</strong> Ollama defaults to this. Use <code class="inline-code">systemd</code> (Linux) or <code class="inline-code">launchd</code> (macOS) to daemonize <code class="inline-code">llama.cpp ./server</code> or <code class="inline-code">text-generation-webui server.py</code>.</li>
+                <li><strong class="key-term">Session Persistence:</strong> Simpler anchoring via <code class="inline-code">tmux</code> / <code class="inline-code">screen</code>.</li>
+                <li><strong class="key-term">Docker Containment:</strong> Encapsulate the entire invocation environment. Use official Ollama images or custom Dockerfiles. Requires mapping ports (<code class="inline-code">-p</code>), volumes (<code class="inline-code">-v</code> for models), and GPU access (<code class="inline-code">--gpus all</code>). Reproducible, isolated, complex.</li>
+             </ul>
+        </section>
+
+        <section id="turbulence">
+            <h2>&gt;&gt;SYSTEM::TURBULENCE:: Troubleshooting Signal Decay</h2>
+            <p>Common points of failure & diagnostic vectors:</p>
+             <ul class="list-disc list-inside space-y-1 mt-2">
+                <li><strong class="key-term">GPU Blindness / Driver Ghosts:</strong> Verify drivers (<code class="inline-code">nvidia-smi</code>) & CUDA/Metal compatibility.</li>
+                <li><strong class="key-term">Dependency Chaos (Python):</strong> Use virtual environments religiously (conda/venv).</li>
+                <li><strong class="key-term">Compilation Phantoms (`llama.cpp`):</strong> Check prerequisites (CMake, CUDA headers). Read error runes carefully.</li>
+                <li><strong class="key-term text-red-500">OOM Entity Rejection (Out-Of-Memory):</strong> Reduce <code class="inline-code">n-gpu-layers</code>, context size, or use heavier quantization. Monitor VRAM usage.</li>
+                <li><strong class="key-term text-red-500">Decoherent Output / Gibberish / Refusals:</strong> <strong class="text-red-500">CHECK CHATML IMPLEMENTATION FIRST.</strong> Verify GGUF integrity. Reset inference parameters.</li>
+                <li><strong class="key-term">Temporal Drag (Slow Performance):</strong> Ensure GPU acceleration active (<code class="inline-code">-ngl</code>, compile flags). Check GPU/CPU utilization.</li>
+             </ul>
+
+             <h3 class="mt-6">Support Channels (Digital Grimoires):</h3>
+             <p>Seek clues in these zones. Diagnose the failing layer (Model? Engine? UI? Substrate?) before querying:</p>
+             <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>GitHub Issues: <a href="https://github.com/NousResearch" target="_blank" rel="noopener noreferrer">NousResearch</a>, <a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer">llama.cpp</a>, <a href="https://github.com/oobabooga/text-generation-webui" target="_blank" rel="noopener noreferrer">oobabooga</a>, <a href="https://github.com/ollama/ollama" target="_blank" rel="noopener noreferrer">Ollama</a></li>
+                <li>Hugging Face: Model cards & community discussions.</li>
+                <li>Reddit: <a href="https://www.reddit.com/r/LocalLLaMA/" target="_blank" rel="noopener noreferrer">r/LocalLLaMA</a>, <a href="https://www.reddit.com/r/Ollama/" target="_blank" rel="noopener noreferrer">r/Ollama</a></li>
+                <li>Discord Servers: Project-specific channels.</li>
+             </ul>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-xs text-magenta-dark mt-12 pt-4 border-t border-magenta-dark">
+        <p>01110011 01111001 01100111 01101110 01100001 01101100 :: Ψ :: 01100100 01100101 01100011 01100001 01111001</p>
+        <p>Copyright Year: [Current Year]-̸̧̀Ψ̴̢</p>
+    </footer>
+
+</body>
+</html>
