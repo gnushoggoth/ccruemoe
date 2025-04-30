@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ My Hive Mind Sim Page!! ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=VT323&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f0f8ff; /* Alice Blue */
+            --bg-secondary: #fff0f5; /* Lavender Blush */
+            --text-main: #4b0082; /* Indigo */
+            --text-light: #6a5acd; /* Slate Blue */
+            --accent1-pink: #ff69b4; /* Hot Pink */
+            --accent2-purple: #da70d6; /* Orchid */
+            --accent3-green: #afeeee; /* Pale Turquoise */
+            --accent4-yellow: #fffacd; /* Lemon Chiffon */
+            --border-color: var(--accent2-purple);
+            --success: #98fb98; /* Pale Green */
+            --error: #ffb6c1; /* Light Pink */
+            --glow-pink: rgba(255, 105, 180, 0.7);
+            --sparkle-color1: #ffeb3b; /* Yellow */
+            --sparkle-color2: #03a9f4; /* Light Blue */
+        }
+
+        /* Basic Sparkle Animation */
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+
+        /* Simple BG Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0 L12.5 7.5 L20 7.5 L15 12.5 L17.5 20 L10 15 L2.5 20 L5 12.5 L0 7.5 L7.5 7.5 Z' fill='%23da70d6' fill-opacity='0.1'/%3E%3C/svg%3E"); /* Tiny orchid stars */
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* font-family: 'Comic Sans MS', 'Comic Neue', cursive; */ /* The classic! */
+            font-family: 'Comic Neue', cursive; /* A slightly better version */
+            line-height: 1.7;
+            color: var(--text-main);
+            background-color: var(--bg-primary);
+            padding: 10px; /* Padding around the whole page */
+        }
+
+        /* Main container with border */
+        .page-wrapper {
+             border: 5px dashed var(--accent1-pink);
+             background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
+             padding: 15px;
+             border-radius: 15px;
+             max-width: 1200px;
+             margin: 10px auto;
+             box-shadow: 0 0 15px rgba(218, 112, 214, 0.5); /* Orchid shadow */
+        }
+
+        header {
+            background: linear-gradient(45deg, var(--accent1-pink), var(--accent2-purple));
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            border: 3px solid white;
+            margin-bottom: 1rem;
+            position: relative; /* For sparkles */
+        }
+
+        /* Sparkles for Header */
+        header::before, header::after {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            font-size: 1.5rem;
+            animation: sparkle 1.5s infinite;
+        }
+        header::before { left: 20px; }
+        header::after { right: 20px; animation-delay: 0.5s; }
+
+        header h1 {
+             font-family: 'Pacifico', cursive; /* Cute script font */
+             font-size: 2.5rem;
+             text-shadow: 2px 2px 0px var(--text-main);
+        }
+
+        .container {
+            /* No longer needed for max-width, using page-wrapper */
+            padding: 0 0.5rem; /* Reduced padding */
+        }
+
+        nav {
+            background-color: var(--accent3-green); /* Mint green */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            margin-bottom: 2rem;
+            border: 2px dotted var(--accent2-purple);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            padding: 0.5rem;
+            margin: 0 0.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 700; /* Bold Comic Neue */
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 15px; /* Pill shape */
+            background-color: var(--accent4-yellow); /* Lemon */
+            border: 1px solid var(--accent2-purple);
+        }
+
+        nav a:hover, nav a:focus {
+            color: white;
+            background-color: var(--accent1-pink);
+            transform: scale(1.1);
+            box-shadow: 0 0 8px var(--glow-pink);
+        }
+         /* Add little hearts to nav items */
+        nav a::before {
+             content: '💖 ';
+             opacity: 0.7;
+        }
+
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            text-align: center;
+            background-color: var(--bg-secondary); /* Lavender blush */
+            border-radius: 10px;
+            border: 3px dashed var(--accent1-pink);
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent1-pink);
+            font-family: 'Pacifico', cursive;
+            text-shadow: 1px 1px 0px var(--accent2-purple);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--accent3-green), var(--accent4-yellow));
+            color: var(--text-main);
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px; /* Rounded */
+            text-decoration: none;
+            font-weight: 700; /* Bold */
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid var(--accent1-pink);
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+            font-family: 'Comic Neue', cursive; /* Ensure button font */
+        }
+
+        .btn:hover, .btn:focus {
+            background: linear-gradient(45deg, var(--accent1-pink), var(--accent2-purple));
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+         /* Sparkle on button hover */
+        .btn:hover::after {
+             content: '✨';
+             display: inline-block;
+             margin-left: 5px;
+             animation: sparkle 1s infinite ease-in-out;
+        }
+
+
+        .section {
+            padding: 2rem 1rem;
+             background-color: rgba(255, 255, 255, 0.8); /* Make sections slightly opaque */
+             border-radius: 10px;
+             margin-bottom: 2rem;
+             border: 1px solid var(--accent3-green);
+        }
+
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--accent2-purple);
+            font-family: 'Pacifico', cursive; /* Script font */
+            position: relative;
+            padding-bottom: 10px;
+        }
+         /* Sparkles around Section Title */
+         .section-title::before, .section-title::after {
+            content: '⭐';
+            position: absolute;
+            bottom: 0;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            animation: sparkle 2s infinite alternate;
+         }
+         .section-title::before { left: 30%; }
+         .section-title::after { right: 30%; animation-delay: 0.7s; }
+
+
+        .card {
+            background-color: var(--accent4-yellow); /* Lemon */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px dotted var(--accent1-pink);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            color: var(--accent1-pink);
+            margin-bottom: 1rem;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            border-bottom: 1px dashed var(--accent2-purple);
+            padding-bottom: 0.5rem;
+            text-align: center;
+        }
+         .card h3::before { content: "💖 "; }
+         .card h3::after { content: " 💖"; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Image Styling */
+        .concept-img {
+            width: 100%;
+            max-width: 500px; /* Smaller */
+            margin: 1.5rem auto;
+            display: block;
+            border: 5px groove var(--accent3-green); /* Thick groove border */
+            padding: 5px;
+            background: white;
+            border-radius: 10px;
+             filter: none; /* Remove cyberpunk filter */
+        }
+        /* Style the SVG specifically */
+        .visualization svg {
+             background-color: var(--bg-secondary); /* Lavender blush background */
+             border: 3px dotted var(--accent1-pink);
+             border-radius: 10px;
+             max-width: 100%;
+             height: auto;
+             padding: 10px;
+             margin-top: 1rem;
+        }
+         /* Update SVG colors */
+        .visualization svg circle[fill="#2a6c8f"] { fill: var(--accent1-pink); } /* Hive */
+        .visualization svg circle[fill="#34495e"] { fill: var(--accent3-green); } /* Units */
+        .visualization svg line[stroke="#2a6c8f"] { stroke: var(--accent2-purple); stroke-width: 2; stroke-dasharray: 5, 5; } /* Connections */
+        .visualization svg text[fill="white"] { fill: var(--text-main); font-weight: bold; font-family: 'Comic Neue', cursive; font-size: 10px; } /* Text on circles */
+        .visualization svg text[fill="#e74c3c"] { fill: var(--accent1-pink); font-weight: bold;} /* Distraction text */
+        .visualization svg circle[fill="#e74c3c"] { fill: var(--error); stroke: var(--accent1-pink); stroke-width: 2px;} /* Distraction circle */
+        .visualization svg text[fill="#f39c12"] { fill: var(--accent2-purple); font-weight: bold;} /* Command text */
+        .visualization svg circle[fill="#f39c12"] { fill: #fffacd; stroke: var(--accent2-purple); stroke-width: 2px; } /* Command circle */
+         .visualization h3 {
+            color: var(--accent1-pink);
+            font-family: 'Pacifico', cursive;
+        }
+
+        .simulator {
+            background-color: var(--accent3-green); /* Pale Turquoise */
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Inset shadow */
+            border: 3px solid white;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+         .simulator h3 {
+            color: var(--text-main);
+            font-family: 'Pacifico', cursive;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+         }
+
+        .param-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .param-control {
+            margin-bottom: 1rem;
+             background-color: rgba(255, 255, 255, 0.5); /* Slightly see-through bg */
+             padding: 10px;
+             border-radius: 8px;
+             border: 1px dashed var(--accent2-purple);
+        }
+
+        .param-control label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700; /* Bold label */
+            color: var(--text-main);
+            font-size: 0.95em;
+        }
+         .param-control label::before {
+             content: "☆ "; /* Star bullet */
+             color: var(--accent1-pink);
+         }
+
+        .param-control input,
+        .param-control select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--accent2-purple);
+            border-radius: 5px; /* Rounded inputs */
+            background-color: white;
+            color: var(--text-main);
+             font-family: 'Comic Neue', cursive; /* Ensure font */
+             box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .param-control input:focus,
+        .param-control select:focus {
+             outline: none;
+             border-color: var(--accent1-pink);
+             box-shadow: 0 0 8px var(--glow-pink); /* Pink glow on focus */
+        }
+
+        .results {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background-color: var(--bg-secondary); /* Lavender Blush */
+            border: 3px double var(--accent3-green); /* Double border */
+        }
+         .results h3 {
+             color: var(--accent1-pink);
+             font-family: 'Pacifico', cursive;
+             text-align: center;
+             margin-bottom: 1rem;
+             font-size: 1.8rem;
+         }
+
+         #resultText {
+             border: 1px dashed var(--accent1-pink);
+             padding: 1rem;
+             margin-bottom: 1rem;
+             background: white;
+             border-radius: 5px;
+             text-align: center;
+         }
+          #resultText h4 {
+             color: var(--accent2-purple);
+             margin-bottom: 0.5rem;
+             font-weight: 700;
+             font-size: 1.1em;
+         }
+         #resultText p {
+             margin-bottom: 0.3rem;
+             font-size: 1em;
+             color: var(--text-light);
+         }
+         #resultText strong {
+             color: var(--accent1-pink);
+             font-weight: 700; /* Bold strong */
+         }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .chart-container {
+            height: 280px;
+            width: 100%;
+            background: white;
+            border: 2px solid var(--accent3-green);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(175, 238, 238, 0.5); /* Pale turquoise shadow */
+        }
+
+        /* Mind Unit Visualization */
+        .visualization {
+            margin-top: 2rem;
+            text-align: center;
+            border-top: 2px dotted var(--accent1-pink);
+            padding-top: 1.5rem;
+        }
+
+        .mind-unit {
+            width: 50px; /* Back to circles */
+            height: 50px;
+            border-radius: 50%; /* Circle */
+            background-color: var(--accent3-green); /* Pale Turquoise base */
+            border: 2px solid white;
+            box-shadow: 0 0 5px var(--accent2-purple); /* Purple shadow */
+            margin: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main); /* Dark text */
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.9em;
+            position: relative; /* For sparkle */
+            font-family: 'VT323', monospace; /* Pixel font for unit ID */
+        }
+
+        /* Sparkle effect for units */
+        .mind-unit::after {
+             content: '✨';
+             position: absolute;
+             top: -5px;
+             right: -5px;
+             font-size: 0.8rem;
+             opacity: 0;
+             transition: opacity 0.3s;
+             animation: sparkle 1.5s infinite;
+             z-index: 10;
+        }
+         .mind-unit:hover::after {
+             opacity: 1;
+         }
+
+        .mind-unit.found { /* Success state */
+            background-color: var(--success); /* Pale Green */
+            border-color: white;
+            box-shadow: 0 0 10px var(--success);
+            color: #333; /* Darker text on pale green */
+            transform: scale(1.1);
+        }
+         .mind-unit.found::after { /* Always show sparkle when found */
+             opacity: 1;
+             color: var(--accent1-pink);
+         }
+
+        .mind-unit.distracted { /* Error state */
+            background-color: var(--error); /* Light Pink */
+            border-color: white;
+            box-shadow: 0 0 10px var(--error);
+            color: #a52a2a; /* Brown text on light pink */
+            transform: rotate(5deg) scale(0.95); /* Tilted and slightly smaller */
+            opacity: 0.8;
+        }
+        /* Maybe a sad face for distracted */
+         .mind-unit.distracted::before {
+             content: ":("; /* Sad face */
+             position: absolute;
+             bottom: 5px;
+             left: 50%;
+             transform: translateX(-50%);
+             font-size: 1rem;
+             color: #a52a2a;
+             font-family: initial; /* Use default font for emoticon */
+         }
+
+
+        footer {
+            background-color: var(--accent2-purple); /* Orchid */
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            border-radius: 0 0 10px 10px;
+            border: 3px solid white;
+            font-weight: 700;
+        }
+         footer p::before {
+             content: "☆*: .｡. o(≧▽≦)o .｡.:*☆ "; /* Kaomoji */
+             opacity: 0.8;
+         }
+         footer p::after {
+             content: " ☆*: .｡. o(≧▽≦)o .｡.:*☆";
+             opacity: 0.8;
+         }
+
+        /* Code Block */
+        pre {
+            background-color: var(--bg-secondary); /* Lavender Blush */
+            padding: 1rem;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-top: 1rem;
+            border: 2px dashed var(--accent1-pink);
+            color: var(--text-light); /* Slate Blue */
+            font-family: 'VT323', monospace; /* Pixel font */
+            font-size: 1.1em; /* Slightly larger pixel font */
+            line-height: 1.6;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+             body { padding: 5px; }
+             .page-wrapper { padding: 10px; margin: 5px; }
+             header h1 { font-size: 2rem; }
+             .section-title { font-size: 1.5rem; }
+             nav ul { justify-content: space-around; } /* Space out nav items better */
+             nav li { margin: 0.2rem; }
+             nav a { padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper"> <header>
+            <div class="container">
+                <h1>✨ My Awesome Hive Mind Simulation Page! ✨</h1>
+            </div>
+        </header>
+
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="#about">About Me & My Project!</a></li>
+                    <li><a href="#concept">How it Works (kinda!)</a></li>
+                    <li><a href="#simulator">Try the Simulator! :D</a></li>
+                    <li><a href="#results">Results Zone!</a></li>
+                    <li><a href="#code">Secret Code Stuff!</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Exploring Cool Brains Working Together!</h1>
+                <p>
+                    Hiii! Welcome! (^-^)/ Wanna see how little computer brains (like, cyborg parts kinda?)
+                    work together like bees or ants? We can even see what happens when they get distracted! LOL.
+                </p>
+                <a href="#simulator" class="btn">Click Here To Try It!! ☆</a>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="container">
+                <h2 class="section-title">All About This Page!</h2>
+                <div class="card">
+                    <h3>My Project Idea!</h3>
+                    <p>
+                        Okay so, this page simulates a "hive mind" - that's like, lots of little computer thinkers
+                        trying to find the letter 'X' in a bunch of text super fast! It's like teamwork!
+                        But sometimes things go WRONG (like distractions!), and we see if telling them "PAY ATTENTION!" really helps.
+                    </p>
+                    <p>
+                        We're testing these things:
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 1rem; list-style: '⭐ '; color: var(--accent1-pink);">
+                        <li><strong>Normal Mode:</strong> Just chillin', no problems.</li>
+                        <li><strong>Distracted Mode:</strong> Uh oh! Things popping up! Standard message.</li>
+                        <li><strong>Super Focus Mode:</strong> Distractions + a LOUD message!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="concept" class="section">
+            <div class="container">
+                <h2 class="section-title">The Hive Mind Concept! (Simplified!)</h2>
+                <div class="card">
+                    <h3>How It Works (Basically!)</h3>
+                    <p>
+                        Imagine lots of tiny robots looking for 'X'. They all look at the same time! But the whole team
+                        isn't finished until the VERY LAST robot finds it. Teamwork makes the dream work... slowly sometimes? 😅
+                    </p>
+                    <p>
+                        Stuff that matters here:
+                    </p>
+                     <ul style="margin-left: 2rem; margin-top: 1rem; list-style: '💖 '; color: var(--accent2-purple);">
+                        <li><strong>Robot Speed:</strong> How fast each robot normally is.</li>
+                        <li><strong>Distractions!!:</strong> Random stuff that makes a robot go slower (oops!).</li>
+                        <li><strong>Shouting Power:</strong> How much telling them to focus helps ignore distractions.</li>
+                    </ul>
+
+                    <div class="visualization">
+                         <h3>Super Cute Diagram!</h3>
+                         <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg"> <circle cx="300" cy="150" r="40" fill="#2a6c8f" /> <text x="300" y="155" fill="white" text-anchor="middle" font-weight="bold">CORE</text> <circle cx="180" cy="100" r="30" fill="#34495e" /> <circle cx="180" cy="200" r="30" fill="#34495e" /> <circle cx="420" cy="100" r="30" fill="#34495e" /> <circle cx="420" cy="200" r="30" fill="#34495e" /> <circle cx="300" cy="270" r="30" fill="#34495e" /> <text x="180" y="105" fill="white" text-anchor="middle" font-weight="bold">Bot1</text> <text x="180" y="205" fill="white" text-anchor="middle" font-weight="bold">Bot2</text> <text x="420" y="105" fill="white" text-anchor="middle" font-weight="bold">Bot3</text> <text x="420" y="205" fill="white" text-anchor="middle" font-weight="bold">Bot4</text> <text x="300" y="275" fill="white" text-anchor="middle" font-weight="bold">Bot5</text> <line x1="220" y1="100" x2="260" y2="150" stroke="#2a6c8f" stroke-width="3" /> <line x1="220" y1="200" x2="260" y2="150" stroke="#2a6c8f" stroke-width="3" /> <line x1="380" y1="100" x2="340" y2="150" stroke="#2a6c8f" stroke-width="3" /> <line x1="380" y1="200" x2="340" y2="150" stroke="#2a6c8f" stroke-width="3" /> <line x1="300" y1="240" x2="300" y2="190" stroke="#2a6c8f" stroke-width="3" /> <circle cx="220" cy="240" r="20" fill="#e74c3c" opacity="0.8" /> <text x="220" y="245" fill="white" text-anchor="middle" font-weight="bold">Oops!</text> <text x="220" y="270" fill="#e74c3c" text-anchor="middle" font-size="12">Distracted!</text> <circle cx="380" cy="240" r="20" fill="#f39c12" opacity="0.8" /> <text x="380" y="245" fill="white" text-anchor="middle" font-weight="bold">Hey!</text> <text x="380" y="270" fill="#f39c12" text-anchor="middle" font-size="12">Focus!</text> </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulator" class="section">
+            <div class="container">
+                <h2 class="section-title">Let's Play With The Simulator!</h2>
+                <div class="simulator">
+                    <h3>Set Up Your Simulation! ☆</h3>
+                    <div class="param-group">
+                        <div class="param-control">
+                            <label for="numMinds">How many little brains?</label>
+                            <input type="number" id="numMinds" min="1" max="20" value="5">
+                        </div>
+                        <div class="param-control">
+                            <label for="stringLength">How long is the text?</label>
+                            <input type="number" id="stringLength" min="10" max="500" value="100">
+                        </div>
+                        <div class="param-control">
+                            <label for="targetChar">What letter to find?</label>
+                            <input type="text" id="targetChar" maxlength="1" value="X">
+                        </div>
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-control">
+                            <label for="baseTime">Normal brain speed (sec):</label>
+                            <input type="number" id="baseTime" min="0.1" max="20" step="0.1" value="5.0">
+                        </div>
+                        <div class="param-control">
+                            <label for="baseTimeStdDev">Speed Wiggle Room (sec):</label>
+                            <input type="number" id="baseTimeStdDev" min="0.1" max="5" step="0.1" value="1.0">
+                        </div>
+                        <div class="param-control">
+                            <label for="distractionProb">Chance of Distraction:</label>
+                            <input type="number" id="distractionProb" min="0" max="1" step="0.05" value="0.4">
+                        </div>
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-control">
+                            <label for="distractionPenalty">Distraction Slowdown (sec):</label>
+                            <input type="number" id="distractionPenalty" min="0" max="10" step="0.5" value="3.0">
+                        </div>
+                        <div class="param-control">
+                            <label for="priorityMitigation">Focus Power (0-1):</label>
+                            <input type="number" id="priorityMitigation" min="0" max="1" step="0.05" value="0.2">
+                        </div>
+                         <div class="param-control">
+                            <label for="numTrials">How many tries each?</label>
+                            <input type="number" id="numTrials" min="1" max="20" value="5">
+                        </div>
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-control">
+                            <label for="condition">Choose a Mode:</label>
+                            <select id="condition">
+                                <option value="control">Normal Mode (Easy!)</option>
+                                <option value="distraction_standard">Distracted Mode (Uh Oh)</option>
+                                <option value="distraction_high_priority">Super Focus Mode (Go!)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="runSimulation" class="btn">Run This Try! ✨</button>
+                     <button id="runAllConditions" class="btn" style="margin-left: 1rem;">Run ALL The Modes! 🚀</button>
+
+                    <div class="visualization">
+                        <h3>Brain Status Monitor!</h3>
+                        <div id="mindUnitsVisual">[Waiting for brains...]</div>
+                    </div>
+
+                    <div class="results">
+                        <h3>Here's What Happened!!</h3>
+                        <div id="resultText">Choose your settings and press Run! ^_^</div>
+                        <div class="results-container">
+                            <div class="chart-container">
+                                <canvas id="timeChart"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="comparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="section">
+            <div class="container">
+                <h2 class="section-title">What We Learned! (Maybe!)</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Distractions are Annoying!</h3>
+                        <p>
+                            OMG, when the distractions were on, the little brains took WAY longer! Like, totally slowed down. Some were fast, some were slow, it was messy!
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3>Shouting Helps! (Kinda)</h3>
+                        <p>
+                            But! When we used the "Super Focus Mode" message, they ignored the distractions better! They were faster than regular distracted mode. Yay! 🎉
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3>Better Teamwork!</h3>
+                        <p>
+                            The focus message also made all the brains finish closer together in time. Less waiting around for the slow ones! Better coordination, I guess? Cool! B-)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="code" class="section">
+            <div class="container">
+                <h2 class="section-title">Super Secret Code Stuff!</h2>
+                <div class="card">
+                     <h3>Behind the Scenes! (Coding!)</h3>
+                    <p>
+                       Psst! This is the Python code that makes the magic happen! It makes the text, pretends to be the little brains, and figures out the time. Pretty neat, huh? Don't tell anyone! 😉
+                    </p>
+                    <pre>
+# Hi! This is my simulation code! Pls be nice! ^_^
+import random
+import time
+import string
+import statistics # Helps with averages!
+
+# --- My Settings!! ---
+# How many brains?
+NUM_BRAINS = 5
+
+# Task Stuff
+TEXT_LENGTH = 100
+LETTER_TO_FIND = 'X'
+
+# Brain Speed Settings (Made Up!)
+NORMAL_SPEED_AVG = 5.0   # seconds
+NORMAL_SPEED_WIGGLE = 1.0 # seconds (they're not all the same!)
+
+# Distraction Settings! >_<
+CHANCE_OF_DISTRACTION = 0.4 # How likely?
+DISTRACTION_SLOWDOWN = 3.0 # How much slower?
+
+# Focus Power!
+# How much the "Focus!" message helps ignore slowdown
+# 1.0 = no help, 0.0 = ignores all slowdown!
+FOCUS_POWER_HELP = 0.2
+
+# How many tries per mode?
+TRIES_PER_MODE = 5
+
+# --- Helper Functions! ---
+
+def make_the_text(length, letter):
+    """Makes random text with the special letter hidden!"""
+    if length < 1: return "", -1
+    other_letters = list(string.ascii_uppercase.replace(letter, ''))
+    random_part = random.choices(other_letters, k=length - 1)
+    hide_spot = random.randint(0, length - 1)
+    full_text_list = random_part[:hide_spot] + [letter] + random_part[hide_spot:]
+    return "".join(full_text_list), hide_spot
+
+def pretend_brain_thinks(is_distraction_mode, is_focus_mode):
+    """Pretends how long one brain takes!"""
+    # 1. Normal thinking time
+    my_speed = max(0.1, random.normalvariate(NORMAL_SPEED_AVG, NORMAL_SPEED_WIGGLE))
+
+    # 2. Check for distractions?
+    extra_time = 0
+    got_distracted = False
+    if is_distraction_mode:
+        if random.random() < CHANCE_OF_DISTRACTION:
+            got_distracted = True
+            slowdown = DISTRACTION_SLOWDOWN
+            # 3. Does the focus message help?
+            if is_focus_mode:
+                slowdown *= (1.0 - FOCUS_POWER_HELP) # Make slowdown smaller!
+            extra_time = slowdown
+
+    total_time = my_speed + extra_time
+    return total_time, got_distracted
+
+def run_one_try(mode_name, brain_count):
+    """Runs one full try for the hive mind!"""
+    the_text, correct_spot = make_the_text(TEXT_LENGTH, LETTER_TO_FIND)
+
+    print("-" * 50)
+    print(f"Running Mode: {mode_name.upper()}!")
+    print(f"Task: {brain_count} brains find '{LETTER_TO_FIND}'!")
+
+    individual_brain_times = []
+    distracted_brain_count = 0
+
+    # Figure out mode settings
+    is_distraction_on = 'distraction' in mode_name
+    is_focus_on = 'high_priority' in mode_name # Keep internal name same
+
+    # Pretend each brain thinks!
+    print(f"Simulating {brain_count} brains... Bzz Bzz!")
+    for i in range(brain_count):
+        brain_time, was_distracted = pretend_brain_thinks(
+            is_distraction_on, is_focus_on
+        )
+        individual_brain_times.append(brain_time)
+        if was_distracted:
+            distracted_brain_count += 1
+        # time.sleep(0.01) # Tiny pause to show thinking?
+
+    # --- Hive Mind Rule: Wait for the Slowest! ---
+    # The whole team is done when the last brain finishes.
+    team_finish_time = max(individual_brain_times)
+
+    print(f"\nIndividual Brain Times: {[f'{t:.2f}s' for t in individual_brain_times]}")
+    print(f"Brains Distracted: {distracted_brain_count}/{brain_count}")
+    print(f"Whole Team Finish Time: {team_finish_time:.2f} seconds!")
+    print("-" * 50)
+    # time.sleep(0.5) # Pause between tries?
+
+    return team_finish_time, individual_brain_times, distracted_brain_count
+                    </pre>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                 <p>Made with ♡ and maybe some robot parts? (c) 2025 My Brain Page!</p>
+            </div>
+        </footer>
+    </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Chart.js global defaults for the new style
+        Chart.defaults.font.family = "'Comic Neue', cursive";
+        Chart.defaults.font.weight = '700';
+        Chart.defaults.color = 'var(--text-main)';
+        Chart.defaults.borderColor = 'var(--accent3-green)';
+
+        const timeCtx = document.getElementById('timeChart').getContext('2d');
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+
+        // --- Chart Configuration ---
+        const baseChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+             plugins: {
+                legend: {
+                    labels: {
+                        color: 'var(--text-main)',
+                         font: { weight: '700' }
+                    }
+                },
+                title: {
+                    display: true,
+                    color: 'var(--accent1-pink)',
+                    font: {
+                        size: 16,
+                         family: "'Pacifico', cursive" // Script font for titles
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(218, 112, 214, 0.2)', // Light purple grid lines
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        color: 'var(--text-light)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        color: 'var(--text-light)'
+                    }
+                }
+            }
+        };
+
+        let timeChart = new Chart(timeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['...'],
+                datasets: [{
+                    label: 'Brain Speed (sec)',
+                    data: [],
+                    backgroundColor: [], // Dynamic
+                    borderColor: [], // Dynamic
+                    borderWidth: 2,
+                     borderRadius: 5, // Rounded bars
+                }]
+            },
+            options: { ...baseChartOptions, plugins: { ...baseChartOptions.plugins, title: { ...baseChartOptions.plugins.title, text: 'Individual Brain Speeds!' }}}
+        });
+
+        let comparisonChart = new Chart(comparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Normal :)', 'Distracted :(', 'Super Focus! :D'],
+                datasets: [{
+                    label: 'Average Team Time (sec)',
+                    data: [0, 0, 0],
+                    backgroundColor: [
+                        'rgba(152, 251, 152, 0.7)', /* Pale Green */
+                        'rgba(255, 182, 193, 0.7)', /* Light Pink */
+                        'rgba(255, 105, 180, 0.7)'  /* Hot Pink */
+                    ],
+                    borderColor: [
+                        'rgb(152, 251, 152)',
+                        'rgb(255, 182, 193)',
+                        'rgb(255, 105, 180)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 5, // Rounded bars
+                }]
+            },
+             options: { ...baseChartOptions, plugins: { ...baseChartOptions.plugins, title: { ...baseChartOptions.plugins.title, text: 'Which Mode Was Fastest?!' }}}
+        });
+
+
+        // --- Simulation Logic (JavaScript - Mostly the same logic) ---
+
+        function normalRandom(mean, stdDev) {
+            const u = 1 - Math.random();
+            const v = Math.random();
+            const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            return z * stdDev + mean;
+        }
+
+        function simulateMindUnit(isDistractionCondition, isHighPriority) {
+            const baseTime = parseFloat(document.getElementById('baseTime').value);
+            const baseTimeStdDev = parseFloat(document.getElementById('baseTimeStdDev').value);
+            const distractionProb = parseFloat(document.getElementById('distractionProb').value);
+            const distractionPenalty = parseFloat(document.getElementById('distractionPenalty').value);
+            const priorityMitigation = parseFloat(document.getElementById('priorityMitigation').value);
+
+            let time = Math.max(0.1, normalRandom(baseTime, baseTimeStdDev));
+            let isDistracted = false;
+            if (isDistractionCondition && Math.random() < distractionProb) {
+                isDistracted = true;
+                let penalty = distractionPenalty;
+                if (isHighPriority) {
+                    penalty *= (1.0 - priorityMitigation);
+                }
+                time += penalty;
+            }
+            return { time, isDistracted };
+        }
+
+        function runTrial(condition) {
+            const numMinds = parseInt(document.getElementById('numMinds').value);
+            const minds = [];
+            const isDistractionCondition = condition.includes('distraction');
+            const isHighPriority = condition.includes('high_priority');
+            const mindUnitsVisual = document.getElementById('mindUnitsVisual');
+            mindUnitsVisual.innerHTML = '';
+
+            for (let i = 0; i < numMinds; i++) {
+                const result = simulateMindUnit(isDistractionCondition, isHighPriority);
+                minds.push(result);
+                const unitDiv = document.createElement('div');
+                 // Check if 'found' state should be applied (e.g., faster than average?)
+                 // For simplicity, let's just use distracted or not for main color, but add 'found' class for effect
+                 let unitClass = 'mind-unit';
+                 if (result.isDistracted) {
+                     unitClass += ' distracted';
+                 } else {
+                     // Maybe add 'found' class if not distracted? Or based on speed?
+                     // Let's just add 'found' if NOT distracted for visual variety
+                      unitClass += ' found';
+                 }
+
+                unitDiv.className = unitClass;
+                unitDiv.textContent = `B${(i + 1)}`; // Simpler ID
+                unitDiv.title = `Brain ${i+1}: ${result.time.toFixed(2)}s ${result.isDistracted ? '(Oopsie!)' : '(Okay!)'}`;
+                mindUnitsVisual.appendChild(unitDiv);
+            }
+
+            const hiveResponseTime = Math.max(...minds.map(m => m.time));
+            const distractedCount = minds.filter(m => m.isDistracted).length;
+
+            // Update Time Chart with new colors
+            timeChart.data.labels = Array.from({length: numMinds}, (_, i) => `Brain ${i+1}`);
+            timeChart.data.datasets[0].data = minds.map(m => m.time);
+            timeChart.data.datasets[0].backgroundColor = minds.map(m =>
+                m.isDistracted ? 'rgba(255, 182, 193, 0.7)' : 'rgba(152, 251, 152, 0.7)' // Light Pink if distracted, Pale Green otherwise
+            );
+            timeChart.data.datasets[0].borderColor = minds.map(m =>
+                 m.isDistracted ? 'rgb(255, 182, 193)' : 'rgb(152, 251, 152)'
+            );
+            timeChart.update();
+
+            // Display text results
+            const resultText = document.getElementById('resultText');
+             resultText.innerHTML = `
+                <h4>Results for: ${condition.replace(/_/g, ' ').toUpperCase()} Mode!</h4>
+                <p>Whole Team Finish Time: <strong>${hiveResponseTime.toFixed(2)}s</strong></p>
+                <p>Brains that got distracted: <strong>${distractedCount}/${numMinds}</strong></p>
+            `;
+
+            return { hiveResponseTime, minds, distractedCount };
+        }
+
+        // Event Listeners (Keep the improved runAllConditions logic)
+        document.getElementById('runSimulation').addEventListener('click', () => {
+            const selectedCondition = document.getElementById('condition').value;
+            runTrial(selectedCondition);
+        });
+
+        async function runAllConditionsAndUpdateChart() {
+            const conditions = ['control', 'distraction_standard', 'distraction_high_priority'];
+             const conditionNames = ['Normal :)', 'Distracted :(', 'Super Focus! :D']; // For display
+            const numTrials = parseInt(document.getElementById('numTrials').value);
+            const averageTimes = [0, 0, 0];
+
+            const resultText = document.getElementById('resultText');
+             resultText.innerHTML = 'Okay, running all the modes now! Plz wait... ✨';
+            document.getElementById('mindUnitsVisual').innerHTML = '';
+
+             document.getElementById('runSimulation').disabled = true;
+             document.getElementById('runAllConditions').disabled = true;
+
+            for (let i = 0; i < conditions.length; i++) {
+                let totalTime = 0;
+                 resultText.innerHTML += `<br/>Running ${numTrials} tries for ${conditionNames[i]}...`;
+
+                for (let j = 0; j < numTrials; j++) {
+                     await new Promise(resolve => setTimeout(resolve, 50)); // Small delay
+                     // Run trial silently by not updating the individual chart/visuals here
+                     const tempMinds = [];
+                     const isDistractionCondition = conditions[i].includes('distraction');
+                     const isHighPriority = conditions[i].includes('high_priority');
+                     for(let k=0; k < parseInt(document.getElementById('numMinds').value); k++){
+                         tempMinds.push(simulateMindUnit(isDistractionCondition, isHighPriority));
+                     }
+                     const trialResponseTime = Math.max(...tempMinds.map(m => m.time));
+                     totalTime += trialResponseTime;
+                }
+                averageTimes[i] = totalTime / numTrials;
+                 resultText.innerHTML += `<br/> -> Avg Time: ${averageTimes[i].toFixed(2)}s!`;
+            }
+
+            comparisonChart.data.datasets[0].data = averageTimes;
+            comparisonChart.update();
+
+             resultText.innerHTML += `<br/><strong>All done! Check out the comparison chart! Yay! 🎉</strong>`;
+
+             document.getElementById('runSimulation').disabled = false;
+             document.getElementById('runAllConditions').disabled = false;
+        }
+
+        document.getElementById('runAllConditions').addEventListener('click', runAllConditionsAndUpdateChart);
+
+        // Initial placeholder text
+        document.getElementById('resultText').textContent = 'Hiii! (^-^)/ Choose settings and click run to start the fun!';
+        document.getElementById('mindUnitsVisual').textContent = '[Brains are sleeping... 😴]';
+
+    </script>
+
+</body>
+</html>
